@@ -2,6 +2,6 @@
   "name": "newchatidea",
   "compatibility_date": "2026-06-06",
   "assets": {
-    "directory": "deploy-phone"
+    "directory": "."
   }
 }
