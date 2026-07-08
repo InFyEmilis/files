@@ -1,0 +1,785 @@
+/* iPad-specific styles — layers on top of styles.css.
+   Master-detail pattern: collapsible drawer + 2 columns (landscape)
+   or drill-down (portrait). Touch sizing throughout. */
+
+/* ── Top bar ─────────────────────────────────────────────────────────────── */
+.ipad-app {
+  display: flex; flex-direction: column;
+  height: 100vh; min-height: 0;
+  background: var(--mc-bg-app);
+  color: var(--mc-text);
+  overflow: hidden;
+}
+.ipad-top {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  height: 56px;
+  flex: 0 0 56px;
+  background: var(--mc-bg-rail);
+  border-bottom: 1px solid var(--mc-border-soft);
+  position: relative;
+  z-index: 30;
+}
+.ipad-top__menu, .ipad-top__back {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--mc-text-mute);
+  flex: 0 0 44px;
+}
+.ipad-top__menu:active, .ipad-top__back:active { background: var(--mc-surface-hi); color: var(--mc-text); }
+
+/* ── Module nav in top bar ────────────────────────────────────────────────── */
+.ipad-top__nav {
+  display: flex; align-items: center;
+  gap: 2px;
+  margin-left: 4px;
+  min-width: 0;
+}
+.ipad-top__tab {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0 12px;
+  height: 40px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mc-text-mute);
+  white-space: nowrap;
+  position: relative;
+  transition: background 120ms, color 120ms;
+}
+.ipad-top__tab:hover { background: var(--mc-surface-hover); color: var(--mc-text); }
+.ipad-top__tab.is-active {
+  background: var(--mc-accent-tint);
+  color: var(--mc-accent);
+}
+.ipad-top__tab-label {
+  /* labels show in landscape only — see portrait media below */
+}
+.ipad-top__tab-count {
+  min-width: 18px; height: 18px;
+  padding: 0 6px;
+  border-radius: 9px;
+  background: var(--mc-surface);
+  color: var(--mc-text-mute);
+  border: 1px solid var(--mc-border-soft);
+  font-size: 10px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+  letter-spacing: 0;
+}
+.ipad-top__tab-count.is-active {
+  background: var(--mc-accent);
+  color: var(--mc-accent-fg);
+  border-color: transparent;
+}
+.ipad-top__tab-bar {
+  position: absolute;
+  bottom: -10px; left: 12px; right: 12px;
+  height: 2px;
+  background: var(--mc-accent);
+  border-radius: 2px 2px 0 0;
+}
+.ipad-top__context {
+  flex: 1;
+  min-width: 0;
+  display: flex; flex-direction: column;
+  margin-left: 4px;
+}
+.ipad-top__context-eyebrow {
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--mc-text-dim);
+}
+.ipad-top__context-title {
+  font-size: 15px; font-weight: 600;
+  color: var(--mc-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ipad-top__search {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 0 14px;
+  height: 40px;
+  width: 280px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 12px;
+  color: var(--mc-text-mute);
+  cursor: pointer;
+  font-size: 13px;
+}
+.ipad-top__search > span { flex: 1; text-align: left; }
+.ipad-top__search kbd {
+  background: var(--mc-bg-chat); border: 1px solid var(--mc-border-soft);
+  color: var(--mc-text-dim);
+}
+.ipad-top__icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--mc-text-mute);
+  position: relative;
+}
+.ipad-top__icon:active { background: var(--mc-surface-hi); color: var(--mc-text); }
+.ipad-top__icon .ipad-dot {
+  position: absolute; top: 8px; right: 8px;
+  min-width: 16px; height: 16px;
+  padding: 0 4px; border-radius: 10px;
+  background: var(--mc-red);
+  color: white;
+  font-size: 9px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 2px solid var(--mc-bg-rail);
+}
+.ipad-top__user {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, oklch(0.45 0.12 230), oklch(0.35 0.10 230));
+  color: oklch(0.96 0.04 230);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 12px;
+  margin-left: 2px;
+}
+
+/* ── Shell ───────────────────────────────────────────────────────────────── */
+.ipad-shell {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  flex: 1; min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+.ipad-shell[data-drawer="open"] { grid-template-columns: 300px 1fr; }
+
+/* ── Drawer ──────────────────────────────────────────────────────────────── */
+.ipad-drawer {
+  display: flex; flex-direction: column;
+  min-height: 0;
+  background: var(--mc-bg-rail);
+  border-right: 1px solid var(--mc-border-soft);
+  overflow: hidden;
+}
+.ipad-drawer__modules {
+  display: flex; flex-direction: column;
+  padding: 12px 10px 8px;
+  gap: 2px;
+}
+.ipad-mod {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 12px;
+  min-height: 44px;
+  border-radius: 10px;
+  color: var(--mc-text-mute);
+  font-size: 14px; font-weight: 500;
+  text-align: left;
+  width: 100%;
+  position: relative;
+}
+.ipad-mod:active { background: var(--mc-surface-hi); }
+.ipad-mod.is-active {
+  background: var(--mc-accent-tint);
+  color: var(--mc-accent);
+}
+.ipad-mod__icon {
+  width: 24px; height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: 0 0 24px;
+}
+.ipad-mod__label {
+  flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ipad-mod__count {
+  min-width: 22px; height: 20px;
+  padding: 0 7px;
+  border-radius: 10px;
+  background: var(--mc-surface);
+  color: var(--mc-text-mute);
+  border: 1px solid var(--mc-border-soft);
+  font-size: 11px; font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.ipad-mod.is-active .ipad-mod__count {
+  background: var(--mc-accent);
+  color: var(--mc-accent-fg);
+  border-color: transparent;
+}
+.ipad-drawer__divider {
+  height: 1px;
+  background: var(--mc-border-soft);
+  margin: 8px 16px;
+}
+.ipad-drawer__sec-label {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mc-text-dim);
+  padding: 14px 22px 6px;
+}
+.ipad-drawer__projects {
+  flex: 1; min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 10px 12px;
+}
+.ipad-proj {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 12px;
+  min-height: 52px;
+  border-radius: 10px;
+  width: 100%;
+  text-align: left;
+  position: relative;
+}
+.ipad-proj:active { background: var(--mc-surface-hi); }
+.ipad-proj.is-active { background: var(--mc-accent-tint); }
+.ipad-proj__chip {
+  width: 38px; height: 38px;
+  flex: 0 0 38px;
+  border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  color: white;
+  letter-spacing: 0.02em;
+  background: var(--mc-c, var(--mc-accent));
+  position: relative;
+}
+.ipad-proj__chip::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+  pointer-events: none;
+}
+.ipad-proj__chip-prio {
+  position: absolute; top: -3px; right: -3px;
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--mc-bg-rail);
+}
+.ipad-proj__chip-prio--crit { background: var(--mc-red); }
+.ipad-proj__chip-prio--high { background: var(--mc-amber); }
+.ipad-proj__body {
+  flex: 1; min-width: 0;
+}
+.ipad-proj__name {
+  font-size: 14px; font-weight: 500;
+  color: var(--mc-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ipad-proj__reason {
+  font-size: 11px; color: var(--mc-text-dim);
+  margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ipad-proj__badge {
+  min-width: 22px; height: 20px;
+  padding: 0 7px;
+  border-radius: 10px;
+  background: var(--mc-text);
+  color: var(--mc-bg-rail);
+  font-size: 11px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
+/* Drawer in collapsed (rail) state — show chips only */
+.ipad-shell:not([data-drawer="open"]) .ipad-mod__label,
+.ipad-shell:not([data-drawer="open"]) .ipad-mod__count,
+.ipad-shell:not([data-drawer="open"]) .ipad-drawer__sec-label,
+.ipad-shell:not([data-drawer="open"]) .ipad-proj__body,
+.ipad-shell:not([data-drawer="open"]) .ipad-proj__badge {
+  display: none;
+}
+.ipad-shell:not([data-drawer="open"]) .ipad-mod,
+.ipad-shell:not([data-drawer="open"]) .ipad-proj {
+  justify-content: center;
+  padding: 8px;
+  min-height: 56px;
+}
+.ipad-shell:not([data-drawer="open"]) .ipad-drawer__divider { margin: 6px 14px; }
+
+/* ── Main pane (inbox + chat) ────────────────────────────────────────────── */
+.ipad-main {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  min-height: 0;
+  background: var(--mc-bg-app);
+  position: relative;
+}
+.ipad-inbox-col {
+  display: flex; flex-direction: column;
+  min-height: 0; min-width: 0;
+  background: var(--mc-bg-inbox);
+  border-right: 1px solid var(--mc-border-soft);
+}
+.ipad-chat-col {
+  display: flex; flex-direction: column;
+  min-height: 0; min-width: 0;
+  background: var(--mc-bg-chat);
+}
+
+/* Touch-friendly conversation rows (override the desktop density) */
+.ipad-app .mc-convrow {
+  padding: 14px 16px;
+  min-height: 64px;
+}
+.ipad-app .mc-conv__title { font-size: 14px; }
+.ipad-app .mc-conv__preview { font-size: 13px; }
+.ipad-app .mc-iconbtn { width: 40px; height: 40px; }
+
+/* ── Portrait: drill-down ────────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .ipad-shell { grid-template-columns: 1fr; }
+  .ipad-shell[data-drawer="open"] { grid-template-columns: 1fr; }
+
+  /* Drawer floats as overlay in portrait */
+  .ipad-drawer {
+    position: absolute; top: 0; bottom: 0; left: 0;
+    width: 84%; max-width: 320px;
+    transform: translateX(-100%);
+    transition: transform 240ms cubic-bezier(.2,.8,.2,1);
+    z-index: 40;
+    box-shadow: var(--mc-shadow-lg);
+  }
+  .ipad-shell[data-drawer="open"] .ipad-drawer { transform: translateX(0); }
+
+  /* Drill-down: inbox always rendered; chat slides over from right */
+  .ipad-main {
+    grid-template-columns: 100%;
+  }
+  .ipad-inbox-col {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .ipad-chat-col {
+    grid-column: 1;
+    grid-row: 1;
+    position: relative;
+    z-index: 10;
+    transform: translateX(100%);
+    transition: transform 260ms cubic-bezier(.2,.8,.2,1);
+    box-shadow: -8px 0 24px rgba(0,0,0,.18);
+  }
+  .ipad-main[data-view="chat"] .ipad-chat-col {
+    transform: translateX(0);
+  }
+
+  /* In portrait, show the search as just an icon to save space */
+  .ipad-top__search {
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+  .ipad-top__search > span, .ipad-top__search kbd { display: none; }
+
+  /* In portrait, module tabs collapse to icon-only */
+  .ipad-top__tab-label { display: none; }
+  .ipad-top__tab { padding: 0 10px; gap: 4px; }
+  .ipad-top__tab-bar { left: 6px; right: 6px; bottom: -10px; }
+
+  /* Hide the inline context title — we use it only as breadcrumb in portrait
+     when inbox is showing; chat view has its own title. */
+  .ipad-main[data-view="chat"] .ipad-inbox-col {
+    visibility: hidden;
+  }
+}
+
+/* Backdrop behind drawer in portrait when open */
+.ipad-drawer-backdrop {
+  position: absolute; inset: 0;
+  background: oklch(0.10 0.01 270 / .5);
+  z-index: 35;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms;
+}
+.ipad-shell[data-drawer="open"] .ipad-drawer-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (min-width: 1024px) {
+  .ipad-drawer-backdrop { display: none; }
+}
+
+/* ── Back chevron in chat header (portrait only) ─────────────────────────── */
+.ipad-chat-back {
+  display: none;
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  align-items: center; justify-content: center;
+  color: var(--mc-text-mute);
+  margin-right: 4px;
+}
+.ipad-chat-back:active { background: var(--mc-surface-hi); color: var(--mc-text); }
+@media (max-width: 1023px) {
+  .ipad-chat-back { display: inline-flex; }
+}
+
+/* ── Hide hover-only chrome on touch ─────────────────────────────────────── */
+@media (hover: none) {
+  .mc-search__clear { opacity: 1; }
+  .mc-rail__expand-mini { display: none !important; }
+  .mc-iconbtn:hover { background: transparent; color: var(--mc-text-mute); }
+}
+
+/* ── Slot the chat pane / placeholder into the chat col ──────────────────── */
+.ipad-chat-col > .mc-chat,
+.ipad-chat-col > .mc-placeholder {
+  flex: 1; min-height: 0;
+}
+.ipad-chat-col > .mc-placeholder {
+  grid-column: auto;
+  padding: 28px 24px 48px;
+}
+
+/* In iPad, when a non-chat module is active, hide the inbox column and let
+   the placeholder span both columns (landscape). */
+.ipad-main[data-module-non-chat] {
+  grid-template-columns: 1fr;
+}
+.ipad-main[data-module-non-chat] .ipad-inbox-col { display: none; }
+@media (max-width: 1023px) {
+  .ipad-main[data-module-non-chat] .ipad-chat-col {
+    transform: translateX(0);
+  }
+}
+
+/* ── Empty state when no conversation chosen (portrait inbox view) ───────── */
+.ipad-chat-empty {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px;
+  color: var(--mc-text-dim);
+  text-align: center;
+  padding: 40px;
+}
+.ipad-chat-empty__icon {
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: var(--mc-surface);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--mc-text-mute);
+}
+.ipad-chat-empty__title {
+  font-size: 16px; font-weight: 500;
+  color: var(--mc-text);
+}
+.ipad-chat-empty__sub {
+  font-size: 13px;
+  max-width: 36ch;
+}
+
+
+/* ── iPad-native nav (Apple-style floating capsule) ───────────────────────── */
+.ipad-top--native {
+  /* Slightly more padding to give the capsule breathing room */
+  padding-top: 8px;
+  padding-bottom: 8px;
+  height: 62px;
+  flex: 0 0 62px;
+}
+
+.ipad-top__nav--native {
+  display: inline-flex; align-items: center;
+  gap: 2px;
+  padding: 4px;
+  height: 44px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 1px 2px rgba(0,0,0,.10);
+  /* Subtle backdrop for that "liquid glass" feel */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+:root[data-theme="light"] .ipad-top__nav--native {
+  background: oklch(0.97 0.005 270 / .8);
+  border-color: oklch(0.88 0.006 270);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    0 1px 3px rgba(15,23,42,.06);
+}
+
+.ipad-top__nav--native .ipad-top__tab {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mc-text-mute);
+  position: relative;
+  letter-spacing: -0.005em;
+}
+.ipad-top__nav--native .ipad-top__tab:hover {
+  color: var(--mc-text);
+  background: transparent;
+}
+.ipad-top__nav--native .ipad-top__tab.is-active {
+  background: var(--mc-accent);
+  color: var(--mc-accent-fg);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.20),
+    0 6px 14px -6px oklch(0.55 0.18 var(--mc-accent-h) / .5);
+}
+:root[data-theme="light"] .ipad-top__nav--native .ipad-top__tab.is-active {
+  box-shadow:
+    0 1px 2px rgba(15,23,42,.15),
+    0 6px 14px -6px oklch(0.55 0.20 var(--mc-accent-h) / .35);
+}
+.ipad-top__nav--native .ipad-top__tab-bar {
+  /* native style has no underline — pill IS the indicator */
+  display: none;
+}
+.ipad-top__nav--native .ipad-top__tab-dot {
+  position: absolute;
+  top: 7px; right: 9px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--mc-red);
+  box-shadow: 0 0 0 2px var(--mc-surface);
+}
+:root[data-theme="light"] .ipad-top__nav--native .ipad-top__tab-dot {
+  box-shadow: 0 0 0 2px white;
+}
+
+/* In portrait native: tabs become icon-only with the active pill collapsing to
+   an icon + the label. Hide labels EXCEPT for the active tab. */
+@media (max-width: 1023px) {
+  .ipad-top__nav--native .ipad-top__tab .ipad-top__tab-label {
+    display: none;
+  }
+  .ipad-top__nav--native .ipad-top__tab.is-active .ipad-top__tab-label {
+    display: inline;
+  }
+  .ipad-top__nav--native .ipad-top__tab {
+    padding: 0 10px;
+    gap: 6px;
+    min-width: 36px;
+    justify-content: center;
+  }
+  .ipad-top__nav--native .ipad-top__tab.is-active {
+    padding: 0 14px;
+  }
+}
+
+/* Smooth transition between pill jumps (purely visual sugar) */
+.ipad-top__nav--native .ipad-top__tab {
+  transition:
+    background 180ms cubic-bezier(.2,.8,.2,1),
+    color 180ms,
+    box-shadow 200ms,
+    padding 180ms;
+}
+
+
+/* ── iPad floating nav (Apple Photos / Music pattern) ────────────────────── */
+.ipad-top--floating {
+  background: transparent;
+  border-bottom: 0;
+  padding: 10px 14px;
+  height: auto;
+  flex: 0 0 auto;
+  gap: 8px;
+  z-index: 30;
+  position: relative;
+}
+
+/* Subtle gradient underneath the floating chrome so content reading under it
+   doesn't make text on the underlying pane fight the floating elements. */
+.ipad-top--floating::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 70px;
+  background: linear-gradient(180deg,
+    oklch(from var(--mc-bg-app) l c h / .85) 0%,
+    oklch(from var(--mc-bg-app) l c h / 0)   100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Round floating menu button (left) */
+.ipad-top--floating .ipad-top__menu,
+.ipad-top--floating .ipad-top__back {
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 50%;
+  width: 44px; height: 44px;
+  flex: 0 0 44px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 1px 2px rgba(0,0,0,.10),
+    0 6px 16px -8px rgba(0,0,0,.30);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+:root[data-theme="light"] .ipad-top--floating .ipad-top__menu,
+:root[data-theme="light"] .ipad-top--floating .ipad-top__back {
+  background: oklch(0.99 0.003 270 / .85);
+  border-color: oklch(0.88 0.006 270);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    0 1px 2px rgba(15,23,42,.05),
+    0 6px 16px -8px rgba(15,23,42,.15);
+}
+
+/* Center capsule — same look as native, but always pushed to center */
+.ipad-top--floating .ipad-top__nav--floating {
+  display: inline-flex; align-items: center;
+  gap: 2px;
+  padding: 4px;
+  height: 44px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 1px 2px rgba(0,0,0,.10),
+    0 6px 16px -8px rgba(0,0,0,.30);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+:root[data-theme="light"] .ipad-top--floating .ipad-top__nav--floating {
+  background: oklch(0.99 0.003 270 / .85);
+  border-color: oklch(0.88 0.006 270);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    0 1px 2px rgba(15,23,42,.05),
+    0 6px 16px -8px rgba(15,23,42,.15);
+}
+
+.ipad-top--floating .ipad-top__nav--floating .ipad-top__tab {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mc-text-mute);
+  position: relative;
+  letter-spacing: -0.005em;
+  transition: background 180ms cubic-bezier(.2,.8,.2,1), color 180ms, box-shadow 200ms, padding 180ms;
+}
+.ipad-top--floating .ipad-top__nav--floating .ipad-top__tab:hover {
+  color: var(--mc-text);
+  background: transparent;
+}
+.ipad-top--floating .ipad-top__nav--floating .ipad-top__tab.is-active {
+  background: var(--mc-accent);
+  color: var(--mc-accent-fg);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.20),
+    0 6px 14px -6px oklch(0.55 0.18 var(--mc-accent-h) / .5);
+}
+.ipad-top--floating .ipad-top__nav--floating .ipad-top__tab-dot {
+  position: absolute;
+  top: 7px; right: 9px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--mc-red);
+  box-shadow: 0 0 0 2px var(--mc-surface);
+}
+
+/* Right cluster — search icon, bell, avatar inside a small floating pill */
+.ipad-top__right {
+  display: inline-flex; align-items: center; gap: 2px;
+}
+.ipad-top--floating .ipad-top__right {
+  padding: 4px;
+  height: 44px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 1px 2px rgba(0,0,0,.10),
+    0 6px 16px -8px rgba(0,0,0,.30);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+:root[data-theme="light"] .ipad-top--floating .ipad-top__right {
+  background: oklch(0.99 0.003 270 / .85);
+  border-color: oklch(0.88 0.006 270);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    0 1px 2px rgba(15,23,42,.05),
+    0 6px 16px -8px rgba(15,23,42,.15);
+}
+.ipad-top--floating .ipad-top__right .ipad-top__icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+}
+.ipad-top--floating .ipad-top__right .ipad-top__icon .ipad-dot {
+  top: 2px; right: 2px;
+  border-color: var(--mc-surface);
+}
+.ipad-top--floating .ipad-top__user {
+  width: 32px; height: 32px;
+  margin-left: 4px;
+  font-size: 11px;
+}
+
+/* In floating, the search collapses to an icon-only button living in the right
+   cluster. The wide search field doesn't fit the "floating capsule" idiom. */
+.ipad-top--floating .ipad-top__search {
+  width: 36px; height: 36px;
+  padding: 0;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  color: var(--mc-text-mute);
+}
+.ipad-top--floating .ipad-top__search:hover {
+  background: var(--mc-surface-hi);
+  color: var(--mc-text);
+}
+.ipad-top--floating .ipad-top__search > span,
+.ipad-top--floating .ipad-top__search kbd {
+  display: none;
+}
+
+/* Portrait floating */
+@media (max-width: 1023px) {
+  .ipad-top--floating .ipad-top__nav--floating .ipad-top__tab .ipad-top__tab-label {
+    display: none;
+  }
+  .ipad-top--floating .ipad-top__nav--floating .ipad-top__tab.is-active .ipad-top__tab-label {
+    display: inline;
+  }
+  .ipad-top--floating .ipad-top__nav--floating .ipad-top__tab {
+    padding: 0 10px;
+    gap: 6px;
+    min-width: 36px;
+    justify-content: center;
+  }
+  .ipad-top--floating .ipad-top__nav--floating .ipad-top__tab.is-active {
+    padding: 0 14px;
+  }
+}
+
+/* In floating chat drill-down (portrait), the back button still pops as a
+   round floating button and the context title lives in its own small pill. */
+.ipad-top--floating .ipad-top__context {
+  height: 44px;
+  padding: 0 14px 0 8px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 999px;
+  display: inline-flex; justify-content: center;
+  margin-left: -6px;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 1px 2px rgba(0,0,0,.10);
+}
+.ipad-top--floating .ipad-top__context-eyebrow {
+  font-size: 9px;
+}
+.ipad-top--floating .ipad-top__context-title {
+  font-size: 13px;
+}
+
+/* When floating, the shell content area visually meets the top — but the
+   .ipad-top header is still flex-positioned above, so we just need the chrome
+   strip to be transparent. The grid still does the layout. */

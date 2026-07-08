@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "live": "node live-server.js"
+  },
+  "devDependencies": {}
+}

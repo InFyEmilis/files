@@ -1,0 +1,2702 @@
+.ipad-files {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(240px, min(var(--files-sidebar-w, 280px), 380px)) minmax(420px, 1fr);
+  --files-green: #16A34A;
+  --files-green-bright: #4ade80;
+  --mc-accent-h: 145;
+  --mc-accent: var(--files-green);
+  --mc-accent-fg: #f7fff9;
+  --mc-accent-soft: oklch(from var(--files-green) l c h / .22);
+  --mc-accent-tint: oklch(from var(--files-green-bright) l c h / .18);
+  --files-chat-teal: oklch(0.70 0.14 205);
+  --files-soft-blue: oklch(from var(--files-green) l c h / .16);
+  --files-soft-teal: oklch(from var(--files-chat-teal) l c h / .16);
+  background: var(--mc-bg-chat);
+  color: var(--mc-text);
+  overflow: hidden;
+  transition: grid-template-columns 160ms cubic-bezier(.2,.8,.2,1);
+}
+
+.ipad-files[data-preview="open"] {
+  grid-template-columns: minmax(240px, min(var(--files-sidebar-w, 280px), 380px)) minmax(420px, 1fr) 320px;
+}
+
+.ipad-files__nav,
+.ipad-files__content,
+.ipad-files__preview {
+  min-height: 0;
+  min-width: 0;
+}
+
+.ipad-files__nav {
+  display: flex;
+  flex-direction: column;
+  background: var(--mc-bg-inbox);
+  border-right: 1px solid var(--mc-border-soft);
+  position: relative;
+}
+
+.ipad-files__project {
+  margin: 16px;
+  padding: 14px;
+  border-radius: 8px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ipad-files__project-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--mc-text-dim);
+}
+
+.ipad-files__project strong {
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.ipad-files__project span:last-child {
+  color: var(--mc-text-dim);
+  font-size: 12px;
+}
+
+.ipad-files__folder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow-y: auto;
+  padding: 0 10px 16px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ipad-files-folder {
+  min-height: 54px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--mc-text-mute);
+  text-align: left;
+}
+
+.ipad-files-folder.is-active {
+  background: var(--files-soft-blue);
+  color: var(--mc-text);
+}
+
+.ipad-files-folder__icon,
+.ipad-files-row__glyph {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mc-surface);
+  color: var(--mc-text-mute);
+  border: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files-folder.is-active .ipad-files-folder__icon {
+  background: var(--files-soft-blue);
+  color: var(--files-green-bright);
+  border-color: transparent;
+}
+
+.ipad-files-folder__body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ipad-files-folder__name {
+  color: var(--mc-text);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ipad-files-folder__meta {
+  color: var(--mc-text-dim);
+  font-size: 11px;
+}
+
+.ipad-files__content {
+  display: flex;
+  flex-direction: column;
+  background: var(--mc-bg-chat);
+}
+
+.ipad-files__toolbar {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files__title {
+  flex: 1;
+  min-width: 0;
+}
+
+.ipad-files__compact-parent {
+  min-height: 34px;
+  max-width: 100%;
+  margin: 4px 0 3px;
+  padding: 0 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--mc-text-mute);
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  font-size: 13px;
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ipad-files__compact-parent:hover,
+.ipad-files__compact-parent:focus-visible {
+  color: var(--mc-text);
+  border-color: oklch(from var(--mc-accent) l c h / .35);
+  outline: 0;
+}
+
+.ipad-files__crumbs {
+  display: flex;
+  align-items: center;
+  color: var(--mc-text-dim);
+  font-size: 12px;
+  white-space: nowrap;
+  min-width: 0;
+  overflow: visible;
+}
+
+.ipad-files__crumb,
+.ipad-files__crumb-sep {
+  flex: 0 1 auto;
+}
+
+.ipad-files__crumb {
+  min-width: 0;
+  max-width: 18ch;
+  color: var(--mc-text-dim);
+  font-size: 12px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ipad-files__crumb:not(.is-current):hover {
+  color: var(--mc-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ipad-files__crumb.is-current {
+  color: var(--mc-text-mute);
+  pointer-events: none;
+}
+
+.ipad-files__crumb-sep {
+  padding: 0 6px;
+  color: var(--mc-text-dim);
+}
+
+.ipad-files__crumb-ellipsis-wrap {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+}
+
+.ipad-files__crumb--ellipsis {
+  max-width: none;
+  padding: 0 2px;
+}
+
+.ipad-files__crumb-menu {
+  position: absolute;
+  z-index: 16;
+  top: 22px;
+  left: 0;
+  min-width: 170px;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-bg-rail);
+  box-shadow: var(--mc-shadow-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.ipad-files__crumb-menu button {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+  color: var(--mc-text);
+  text-align: left;
+  font-size: 12px;
+}
+
+.ipad-files__crumb-menu button:hover {
+  background: var(--mc-surface);
+}
+
+.ipad-files__title h2 {
+  margin: 3px 0 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.ipad-files__actions,
+.ipad-files__controls,
+.ipad-files__meta-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ipad-files__btn,
+.ipad-files__iconbtn,
+.ipad-files__meta-actions button {
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  color: var(--mc-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ipad-files__iconbtn {
+  width: 38px;
+  padding: 0;
+  color: var(--mc-text-mute);
+}
+
+.ipad-files__btn--primary {
+  background: var(--mc-accent);
+  color: var(--mc-accent-fg);
+  border-color: transparent;
+}
+
+.ipad-files__controls {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files__search {
+  flex: 1;
+  min-width: 160px;
+  height: 38px;
+  border-radius: 8px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  color: var(--mc-text-mute);
+}
+
+.ipad-files__search input,
+.ipad-files__controls select {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--mc-text);
+  font: inherit;
+  min-width: 0;
+}
+
+.ipad-files__search input {
+  flex: 1;
+}
+
+.ipad-files__controls select {
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  padding: 0 10px;
+}
+
+.ipad-files__subfolders {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 18px 0;
+}
+
+.ipad-files__subfolders span {
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  color: var(--mc-text-mute);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.ipad-files__table {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 18px 24px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ipad-files-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(230px, 1.4fr) minmax(130px, .8fr) minmax(110px, .7fr) minmax(120px, .65fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--mc-text-mute);
+  text-align: left;
+}
+
+.ipad-files-row--head {
+  min-height: 34px;
+  color: var(--mc-text-dim);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  pointer-events: none;
+}
+
+.ipad-files-row:not(.ipad-files-row--head):hover,
+.ipad-files-row.is-selected {
+  background: var(--mc-surface);
+}
+
+.ipad-files-row.is-selected {
+  box-shadow: inset 0 0 0 1px var(--mc-border-soft);
+}
+
+.ipad-files-row__name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ipad-files-row__name > span:last-child {
+  min-width: 0;
+}
+
+.ipad-files-row__name strong,
+.ipad-files-row__name small {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ipad-files-row__name strong {
+  color: var(--mc-text);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.ipad-files-row__name small {
+  margin-top: 2px;
+  color: var(--mc-text-dim);
+  font-size: 11px;
+}
+
+.ipad-files-backup {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  color: var(--mc-text-mute);
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.ipad-files-backup--ok { color: var(--mc-green); }
+.ipad-files-backup--warn { color: var(--mc-amber); }
+.ipad-files-backup--bad { color: var(--mc-red); }
+
+.ipad-files__empty {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--mc-text-dim);
+  text-align: center;
+}
+
+.ipad-files__empty strong {
+  color: var(--mc-text);
+}
+
+.ipad-files__preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 16px 16px;
+  border-left: 1px solid var(--mc-border-soft);
+  background: var(--mc-bg-inbox);
+  overflow-y: auto;
+}
+
+.ipad-files__preview-head {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  min-height: 54px;
+  margin: 0 -16px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--mc-bg-inbox);
+  border-bottom: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files__preview-head strong {
+  color: var(--mc-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ipad-files__preview-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mc-text-mute);
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files__preview-close:hover,
+.ipad-files__preview-close:focus-visible {
+  color: var(--mc-text);
+  outline: 0;
+  border-color: var(--mc-accent);
+}
+
+.ipad-files-previewbox {
+  height: 240px;
+  width: 100%;
+  border-radius: 8px;
+  background: var(--mc-bg-chat);
+  border: 1px solid var(--mc-border-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ipad-files-previewbox__glyph {
+  width: 82px;
+  height: 82px;
+  border-radius: 22px;
+  background: var(--mc-accent-tint);
+  color: var(--mc-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ipad-files-previewbox__type {
+  color: var(--mc-text-dim);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  padding: 0 14px;
+}
+
+.ipad-files-previewbox--active {
+  overflow: hidden;
+  padding: 0;
+  background: var(--mc-bg-chat);
+}
+
+.ipad-files-previewbox--active img,
+.ipad-files-previewbox--active video,
+.ipad-files-previewbox--active iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.ipad-files-previewbox--active img,
+.ipad-files-previewbox--active video {
+  object-fit: contain;
+  background: var(--mc-bg-chat);
+}
+
+.ipad-files-previewbox--active iframe {
+  background: var(--mc-surface);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ipad-files__meta-head h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  line-height: 1.25;
+  letter-spacing: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.ipad-files__meta-head span {
+  color: var(--mc-text-dim);
+  font-size: 12px;
+}
+
+.ipad-files__meta-actions button {
+  flex: 1;
+}
+
+.ipad-files__panel-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ipad-files__panel-actions button {
+  min-height: 38px;
+  padding: 0 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ipad-files__panel-actions--primary button {
+  background: var(--mc-surface);
+  color: var(--mc-text);
+  border: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files__panel-actions--primary button:first-child {
+  background: var(--mc-accent);
+  color: var(--mc-accent-fg);
+  border-color: transparent;
+}
+
+.ipad-files__panel-actions--secondary button {
+  background: transparent;
+  color: var(--mc-text);
+  border: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files__panel-actions button:hover,
+.ipad-files__panel-actions button:focus-visible {
+  background: var(--mc-surface-hover);
+  outline: 0;
+}
+
+.ipad-files__access-summary {
+  width: 100%;
+  min-height: 76px;
+  padding: 14px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(78px, auto);
+  align-items: center;
+  column-gap: 16px;
+  text-align: left;
+  color: inherit;
+}
+
+.ipad-files__access-summary:hover,
+.ipad-files__access-summary:focus-visible {
+  background: var(--mc-surface-hover);
+  border-color: oklch(from var(--files-green-bright) l c h / .36);
+  outline: 0;
+}
+
+.ipad-files__access-summary > div:first-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.ipad-files__access-summary h4 {
+  margin: 0;
+  color: var(--mc-text);
+  font-size: 13px;
+  line-height: 1.15;
+  font-weight: 750;
+}
+
+.ipad-files__access-summary span {
+  color: var(--mc-text-dim);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.ipad-files__access-summary small {
+  color: var(--files-green-bright);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.ipad-files__access-avatars {
+  min-width: 78px;
+  max-width: 94px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+  transform: translateY(1px);
+}
+
+.ipad-files__access-avatars .mc-avatar-stack {
+  flex: 0 1 auto;
+  overflow: hidden;
+}
+
+.ipad-files__access-fallback {
+  color: var(--mc-text-mute);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+.ipad-files__more-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.ipad-files__more-wrap > button {
+  width: 100%;
+}
+
+.ipad-files__more-menu {
+  position: fixed;
+  z-index: 120;
+  width: 210px;
+  max-height: min(320px, calc(100vh - 16px));
+  overflow-y: auto;
+  padding: 6px;
+  border-radius: 8px;
+  background: var(--mc-bg-rail);
+  border: 1px solid var(--mc-border-soft);
+  box-shadow: var(--mc-shadow-lg);
+}
+
+.ipad-files__more-menu button {
+  width: 100%;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: var(--mc-text);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.ipad-files__more-menu button:hover {
+  background: var(--mc-surface-hover);
+}
+
+.ipad-files__more-menu button.is-danger {
+  color: var(--mc-red);
+}
+
+.ipad-files__more-divider {
+  display: block;
+  height: 1px;
+  margin: 6px 4px;
+  background: var(--mc-border-soft);
+}
+
+.ipad-files__preview .ipad-files__meta-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ipad-files__preview .ipad-files__meta-actions button {
+  min-width: 0;
+  justify-content: center;
+}
+
+.ipad-files__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+}
+
+.ipad-files__meta-section {
+  padding-top: 4px;
+}
+
+.ipad-files__meta-section h4 {
+  margin: 0 0 4px;
+  color: var(--mc-text-dim);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.ipad-files__meta div {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files__meta dt {
+  color: var(--mc-text-dim);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.ipad-files__meta dd {
+  margin: 0;
+  color: var(--mc-text);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ipad-files__warning {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 11px;
+  border-radius: 8px;
+  background: oklch(from var(--mc-red) l c h / .10);
+  color: var(--mc-red);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ipad-files__panel-toast {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  min-height: 40px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  color: var(--mc-text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  box-shadow: var(--mc-shadow-md);
+}
+
+.ipad-files__panel-toast span {
+  flex: 1;
+}
+
+.ipad-files__panel-toast button {
+  color: var(--files-green-bright);
+  font-weight: 800;
+}
+
+.ipad-files-delete-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
+  color: var(--mc-text-dim);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.ipad-files-delete-copy strong {
+  color: var(--mc-text);
+}
+
+.ipad-files-danger-button {
+  background: var(--mc-red) !important;
+  color: white !important;
+}
+
+.ipad-files-access-people {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ipad-files-access-people__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ipad-files-access-people__head > span {
+  color: var(--mc-text-dim);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.ipad-files-access-people__head select {
+  height: 32px;
+  min-width: 150px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  color: var(--mc-text);
+  padding: 0 9px;
+  outline: 0;
+  font-size: 12px;
+}
+
+.ipad-files-access-people__list {
+  max-height: 214px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 2px;
+}
+
+.ipad-files-access-person {
+  display: grid;
+  grid-template-columns: 18px 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+}
+
+.ipad-files-access-person input {
+  accent-color: var(--mc-accent);
+}
+
+.ipad-files-access-person__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ipad-files-access-person__body strong {
+  color: var(--mc-text);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ipad-files-access-person__body small {
+  color: var(--mc-text-dim);
+  font-size: 11px;
+}
+
+.ipad-files-access-person__fallback {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--files-soft-blue);
+  color: var(--files-green-bright);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.ipad-files-access-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ipad-files-access-view__toolbar {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ipad-files-access-view__toolbar span {
+  color: var(--mc-text-dim);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ipad-files-access-view__toolbar button {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  color: var(--mc-text);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.ipad-files-access-view__toolbar button[aria-pressed="true"] {
+  background: var(--files-soft-blue);
+  border-color: oklch(from var(--files-green-bright) l c h / .28);
+  color: var(--files-green-bright);
+}
+
+.ipad-files-access-view__summary {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ipad-files-access-view__summary > div:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ipad-files-access-view__summary strong {
+  color: var(--mc-text);
+  font-size: 13px;
+}
+
+.ipad-files-access-view__summary span {
+  color: var(--mc-text-dim);
+  font-size: 12px;
+}
+
+.ipad-files-access-view__empty-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--mc-surface-hover);
+  color: var(--mc-text-dim);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.ipad-files-access-view__list {
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 2px;
+}
+
+.ipad-files-access-view__person {
+  min-height: 48px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  display: grid;
+  grid-template-columns: 18px 30px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 9px;
+}
+
+.ipad-files-access-view__person.is-editing {
+  cursor: pointer;
+}
+
+.ipad-files-access-view__person.is-added {
+  border-color: oklch(from var(--files-green-bright) l c h / .24);
+  background: oklch(from var(--files-green) l c h / .08);
+}
+
+.ipad-files-access-view__person input {
+  accent-color: var(--mc-accent);
+}
+
+.ipad-files-access-view__presence {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 1px solid var(--mc-border-soft);
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  background: var(--mc-bg-chat);
+  color: var(--mc-green);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.ipad-files-access-view__person span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ipad-files-access-view__person strong {
+  color: var(--mc-text);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ipad-files-access-view__person small {
+  color: var(--mc-text-dim);
+  font-size: 11px;
+}
+
+.ipad-files-access-view__status {
+  min-width: 44px !important;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  background: var(--mc-surface-hover);
+  color: var(--mc-text-dim);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.ipad-files-access-view__person.is-added .ipad-files-access-view__status {
+  background: oklch(from var(--mc-green) l c h / .14);
+  color: var(--mc-green);
+}
+
+.ipad-files-access-view__person em {
+  min-width: 34px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--files-soft-blue);
+  color: var(--files-green-bright);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.ipad-files-access-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ipad-files-access-confirm__head {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ipad-files-access-confirm__head strong {
+  color: var(--mc-text);
+  font-size: 14px;
+}
+
+.ipad-files-access-confirm__head span {
+  color: var(--mc-text-dim);
+  font-size: 12px;
+}
+
+.ipad-files-access-confirm__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ipad-files-access-confirm__group h4 {
+  margin: 0;
+  color: var(--mc-green);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.ipad-files-access-confirm__group.is-remove h4 {
+  color: var(--mc-red);
+}
+
+.ipad-files-access-confirm__change {
+  min-height: 46px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+}
+
+.ipad-files-access-confirm__change strong {
+  color: var(--mc-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ipad-files-access-confirm__change span {
+  color: var(--mc-text-dim);
+  font-size: 12px;
+}
+
+.ipad-files-access-confirm__person {
+  min-height: 46px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.ipad-files-access-confirm__person span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ipad-files-access-confirm__person strong {
+  color: var(--mc-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ipad-files-access-confirm__person small {
+  color: var(--mc-text-dim);
+  font-size: 11px;
+}
+
+.ipad-files-full-preview {
+  min-height: 380px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-bg-chat);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ipad-files-full-preview img,
+.ipad-files-full-preview video,
+.ipad-files-full-preview iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  border: 0;
+  object-fit: contain;
+  background: var(--mc-bg-chat);
+}
+
+@media (max-width: 980px) {
+  .ipad-files__panel-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1180px) {
+  .ipad-files {
+    grid-template-columns: minmax(240px, min(var(--files-sidebar-w, 280px), 380px)) minmax(0, 1fr);
+  }
+
+  .ipad-files[data-preview="open"] {
+    grid-template-columns: minmax(240px, min(var(--files-sidebar-w, 280px), 380px)) minmax(0, 1fr);
+  }
+
+  .ipad-files__preview {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    transform: translateX(100%);
+    transition: transform 240ms cubic-bezier(.2,.8,.2,1);
+    border-left: 0;
+    padding: 16px 22px 24px;
+  }
+
+  .ipad-files__preview.is-open {
+    transform: translateX(0);
+  }
+
+  .ipad-files__preview-close { align-self: flex-start; }
+}
+
+@media (max-width: 820px) {
+  .ipad-files {
+    grid-template-columns: 1fr;
+  }
+
+  .ipad-files__nav {
+    display: none;
+  }
+
+  .ipad-files__toolbar,
+  .ipad-files__controls {
+    flex-wrap: wrap;
+  }
+
+  .ipad-files-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 12px 10px;
+  }
+
+  .ipad-files-row--head {
+    display: none;
+  }
+}
+
+/* Dropbox-style file browser refinements layered on the Mecca iPad shell. */
+.ipad-files {
+  grid-template-columns: minmax(240px, min(var(--files-sidebar-w, 280px), 380px)) minmax(480px, 1fr);
+}
+
+.ipad-files[data-preview="open"] {
+  grid-template-columns: minmax(240px, min(var(--files-sidebar-w, 280px), 380px)) minmax(420px, 1fr) 332px;
+}
+
+.ipad-files__nav {
+  background: #0F1117 !important;
+  background-color: #0F1117 !important;
+}
+
+.ipad-files__content,
+.ipad-files__toolbar,
+.ipad-files__controls,
+.ipad-files-row--head {
+  background: var(--mc-bg-chat);
+}
+
+.ipad-files__resize {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 8;
+}
+
+.ipad-files__resize::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2px;
+  width: 1px;
+  background: transparent;
+  transition: background 120ms;
+}
+
+.ipad-files__resize:hover::after {
+  background: var(--mc-border-soft);
+}
+
+.ipad-files__project {
+  margin: 14px 12px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border-color: transparent;
+  padding: 8px 10px;
+}
+
+.ipad-files-folder-head {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px 0 18px;
+  color: var(--mc-text-dim);
+}
+
+.ipad-files-folder-head span {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.ipad-files-folder-head button {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mc-text-mute);
+}
+
+.ipad-files-folder-head button:hover {
+  background: var(--mc-surface-hover);
+  color: var(--mc-text);
+}
+
+.ipad-files-folder {
+  min-height: 38px;
+  padding: 0 4px 0 calc(6px + (var(--level, 0) * 11px));
+  gap: 0;
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: center;
+  position: relative;
+}
+
+.ipad-files-folder__main {
+  min-width: 0;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 8px;
+  padding: 4px 6px 4px 4px;
+  color: inherit;
+  text-align: left;
+}
+
+.ipad-files-folder:hover .ipad-files-folder__main,
+.ipad-files-folder.is-active .ipad-files-folder__main,
+.ipad-files-folder.is-menu-open .ipad-files-folder__main {
+  padding-right: 28px;
+}
+
+.ipad-files-folder__chev,
+.ipad-files-folder__more {
+  width: 24px;
+  height: 30px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mc-text-dim);
+}
+
+.ipad-files-folder__chev:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ipad-files-folder__chev svg {
+  transform: rotate(0deg);
+  transition: transform 120ms;
+}
+
+.ipad-files-folder__chev.is-expanded svg {
+  transform: rotate(90deg);
+}
+
+.ipad-files-folder__more {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+}
+
+.ipad-files-folder:hover .ipad-files-folder__more,
+.ipad-files-folder.is-active .ipad-files-folder__more,
+.ipad-files-folder.is-menu-open .ipad-files-folder__more {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ipad-files-folder__chev:hover,
+.ipad-files-folder__more:hover {
+  background: var(--mc-surface-hover);
+  color: var(--mc-text);
+}
+
+.ipad-files-folder__icon {
+  width: 24px;
+  height: 28px;
+  flex-basis: 24px;
+  border: 0;
+  background: transparent;
+  color: var(--mc-text-mute);
+}
+
+.ipad-files-folder.is-active {
+  background: var(--files-soft-blue);
+  color: var(--mc-text);
+}
+
+.ipad-files-folder.is-active .ipad-files-folder__icon {
+  background: transparent;
+  color: var(--files-green-bright);
+}
+
+.ipad-files-folder__meta {
+  display: none;
+}
+
+.ipad-files-folder__count {
+  min-width: 22px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  color: var(--mc-text-dim);
+  background: var(--mc-bg-chat);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 2px;
+  flex: 0 0 auto;
+}
+
+.ipad-files-tree__guide {
+  position: absolute;
+  left: calc(16px + ((var(--level, 0) - 1) * 11px));
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--mc-border-soft);
+  display: none;
+}
+
+.ipad-files-folder[style*="--level: 1"] .ipad-files-tree__guide,
+.ipad-files-folder[style*="--level: 2"] .ipad-files-tree__guide,
+.ipad-files-folder[style*="--level: 3"] .ipad-files-tree__guide,
+.ipad-files-folder-draft[style*="--level: 1"] .ipad-files-tree__guide,
+.ipad-files-folder-draft[style*="--level: 2"] .ipad-files-tree__guide,
+.ipad-files-folder-draft[style*="--level: 3"] .ipad-files-tree__guide {
+  display: block;
+}
+
+.ipad-files-folder-menu {
+  position: absolute;
+  z-index: 12;
+  right: 8px;
+  top: 34px;
+  min-width: 160px;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-bg-rail);
+  box-shadow: var(--mc-shadow-lg);
+}
+
+.ipad-files-folder-menu button {
+  width: 100%;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+  color: var(--mc-text);
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  text-align: left;
+}
+
+.ipad-files-folder-menu button:hover {
+  background: var(--mc-surface-hover);
+}
+
+.ipad-files-folder-menu button.is-danger {
+  color: var(--mc-red);
+}
+
+.ipad-files-action-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: oklch(0.10 0.01 270 / .48);
+}
+
+.ipad-files-action-panel__sheet {
+  width: min(420px, calc(100vw - 32px));
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  border-radius: 8px;
+  background: var(--mc-bg-rail);
+  border: 1px solid var(--mc-border-soft);
+  box-shadow: var(--mc-shadow-lg);
+  padding: 14px;
+}
+
+.ipad-files-action-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files-action-panel__head div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ipad-files-action-panel__head span {
+  color: var(--mc-text-dim);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.ipad-files-action-panel__head strong {
+  color: var(--mc-text);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ipad-files-action-panel__head button {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mc-text-mute);
+}
+
+.ipad-files-action-panel__head button:hover {
+  background: var(--mc-surface);
+  color: var(--mc-text);
+}
+
+.ipad-files-access-row,
+.ipad-files-folder-details div {
+  display: grid;
+  grid-template-columns: minmax(120px, .85fr) minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files-access-row--toggle {
+  grid-template-columns: 16px minmax(120px, .85fr) minmax(0, 1fr);
+  align-items: center;
+  cursor: pointer;
+}
+
+.ipad-files-access-row--toggle input {
+  margin: 0;
+  accent-color: var(--mc-accent);
+}
+
+.ipad-files-access-row span,
+.ipad-files-folder-details dt {
+  color: var(--mc-text-dim);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.ipad-files-access-row strong,
+.ipad-files-folder-details dd {
+  margin: 0;
+  color: var(--mc-text);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ipad-files-folder-details {
+  margin: 0;
+}
+
+.ipad-files-action-panel__note {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--mc-surface);
+  color: var(--mc-text-mute);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ipad-files-action-panel__foot {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 14px;
+}
+
+.ipad-files-action-panel__foot button {
+  min-width: 72px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--mc-accent);
+  color: var(--mc-accent-fg);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.ipad-files-action-panel__foot button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+.ipad-files-action-panel__foot .ipad-files-action-panel__secondary {
+  background: var(--mc-surface);
+  color: var(--mc-text);
+  border: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files-create-folder {
+  width: min(460px, calc(100vw - 32px));
+}
+
+.ipad-files-create-folder__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 14px;
+}
+
+.ipad-files-create-folder__field,
+.ipad-files-create-folder__access,
+.ipad-files-create-folder__users {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ipad-files-create-folder__field > span,
+.ipad-files-create-folder__access > span,
+.ipad-files-create-folder__users > span {
+  color: var(--mc-text-dim);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.ipad-files-create-folder__field input {
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-bg-chat);
+  color: var(--mc-text);
+  padding: 0 11px;
+  outline: 0;
+}
+
+.ipad-files-create-folder__field select,
+.ipad-files-create-folder__field textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-bg-chat);
+  color: var(--mc-text);
+  padding: 0 11px;
+  outline: 0;
+  font: inherit;
+}
+
+.ipad-files-create-folder__field select {
+  height: 38px;
+}
+
+.ipad-files-create-folder__field textarea {
+  min-height: 104px;
+  padding-top: 10px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.ipad-files-create-folder__field input:focus,
+.ipad-files-create-folder__field select:focus,
+.ipad-files-create-folder__field textarea:focus {
+  border-color: var(--mc-accent);
+  box-shadow: 0 0 0 3px oklch(from var(--files-green-bright) l c h / .16);
+}
+
+.ipad-files-create-folder__field small,
+.ipad-files-create-folder__access small {
+  color: var(--mc-text-dim);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ipad-files-create-folder__access label,
+.ipad-files-create-folder__user-list label {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  gap: 8px 10px;
+  align-items: center;
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  color: var(--mc-text);
+}
+
+.ipad-files-create-folder__access label small {
+  grid-column: 2;
+}
+
+.ipad-files-create-folder__access input,
+.ipad-files-create-folder__user-list input {
+  accent-color: var(--mc-accent);
+}
+
+.ipad-files-create-folder__users {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ipad-files-create-folder__users-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ipad-files-create-folder__users-head > span {
+  color: var(--mc-text-dim);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.ipad-files-create-folder__users-head select {
+  height: 32px;
+  min-width: 170px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-surface);
+  color: var(--mc-text);
+  padding: 0 9px;
+  outline: 0;
+  font-size: 12px;
+}
+
+.ipad-files-create-folder__user-list {
+  max-height: 190px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 2px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ipad-files-create-folder__user-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ipad-files-create-folder__user-main strong {
+  color: var(--mc-text);
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ipad-files-create-folder__user-main small {
+  color: var(--mc-text-dim);
+  font-size: 11px;
+}
+
+.ipad-files-create-folder__role {
+  min-width: 38px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--files-soft-blue);
+  color: var(--files-green-bright);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.ipad-files-create-folder__error {
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: oklch(from var(--mc-red) l c h / .10);
+  color: var(--mc-red);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.ipad-files-file-action__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 14px;
+}
+
+.ipad-files-file-action__annotations {
+  max-height: 150px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ipad-files-file-action__annotations div {
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files-file-action__annotations strong,
+.ipad-files-file-action__annotations span {
+  display: block;
+}
+
+.ipad-files-file-action__annotations strong {
+  color: var(--mc-text);
+  font-size: 12px;
+}
+
+.ipad-files-file-action__annotations span {
+  margin-top: 3px;
+  color: var(--mc-text-dim);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ipad-files-create-folder__foot {
+  gap: 8px;
+}
+
+.ipad-files-folder-draft {
+  min-height: 38px;
+  padding: 2px 8px 2px calc(34px + (var(--level, 0) * 14px));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.ipad-files-folder-draft__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ipad-files-folder-draft__body input {
+  width: 100%;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-bg-chat);
+  color: var(--mc-text);
+  padding: 0 8px;
+  outline: 0;
+  font: inherit;
+  font-size: 12px;
+}
+
+.ipad-files-folder-draft__body input:focus {
+  border-color: var(--mc-accent);
+}
+
+.ipad-files-folder-draft__body span {
+  color: var(--mc-red);
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.ipad-files-folder-draft > button {
+  width: 26px;
+  height: 28px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mc-green);
+}
+
+.ipad-files-folder.is-drop-valid {
+  box-shadow: inset 0 0 0 1px var(--mc-green);
+  background: oklch(from var(--mc-green) l c h / .10);
+}
+
+.ipad-files-folder.is-drop-invalid {
+  box-shadow: inset 0 0 0 1px var(--mc-red);
+  background: oklch(from var(--mc-red) l c h / .10);
+}
+
+.ipad-files__toolbar {
+  min-height: 70px;
+  padding: 12px 18px;
+  background: var(--mc-bg-chat);
+}
+
+.ipad-files__title h2 {
+  font-size: 24px;
+}
+
+.ipad-files__iconbtn.is-active {
+  background: var(--files-soft-blue);
+  color: var(--files-green-bright);
+  border-color: transparent;
+}
+
+.ipad-files__upload-input {
+  display: none;
+}
+
+.ipad-files__controls {
+  padding: 10px 18px;
+  background: var(--mc-bg-chat);
+}
+
+.ipad-files__search {
+  border-radius: 999px;
+  background: var(--mc-surface);
+}
+
+.ipad-files__search:focus-within {
+  background: var(--mc-bg-chat);
+  border-color: var(--mc-accent);
+  box-shadow: 0 0 0 3px oklch(from var(--files-green-bright) l c h / .16);
+}
+
+.ipad-files__controls select {
+  appearance: none;
+  min-width: 104px;
+  height: 40px;
+  border-radius: 10px;
+  padding: 0 34px 0 14px;
+  border-color: transparent;
+  background-color: var(--mc-surface);
+  background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a7adbb' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  color: var(--mc-text);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.ipad-files__controls select:first-of-type {
+  min-width: 126px;
+}
+
+.ipad-files__controls select:hover {
+  background-color: var(--mc-surface-hover);
+}
+
+.ipad-files__controls select:focus-visible {
+  border-color: var(--mc-accent);
+  box-shadow: 0 0 0 3px oklch(from var(--files-green-bright) l c h / .16);
+}
+
+.ipad-files__selectionbar {
+  min-height: 44px;
+  margin: 12px 18px 0;
+  padding: 6px 8px 6px 12px;
+  border-radius: 8px;
+  background: var(--files-soft-blue);
+  color: var(--mc-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ipad-files__selectionbar strong {
+  margin-right: auto;
+  font-size: 13px;
+}
+
+.ipad-files__selectionbar button {
+  height: 30px;
+  padding: 0 9px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--mc-text);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.ipad-files__selectionbar button:hover {
+  background: var(--mc-surface);
+}
+
+.ipad-files__folder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ipad-files-card {
+  min-height: 94px;
+  border-radius: 8px;
+  border: 1px solid var(--mc-border-soft);
+  background: var(--mc-bubble-other);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px;
+  text-align: left;
+}
+
+.ipad-files-card:hover {
+  border-color: oklch(from var(--files-green-bright) l c h / .35);
+  background: var(--mc-surface-hover);
+}
+
+.ipad-files-card__icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 8px;
+  background: var(--files-soft-blue);
+  color: var(--files-green-bright);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ipad-files-card__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ipad-files-card__name {
+  color: var(--mc-text);
+  font-size: 13px;
+  font-weight: 700;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  line-height: 1.25;
+}
+
+.ipad-files-card__meta {
+  color: var(--mc-text-dim);
+  font-size: 12px;
+}
+
+.ipad-files-row {
+  grid-template-columns: 28px minmax(360px, 2.25fr) minmax(130px, .62fr) minmax(150px, .7fr) 56px;
+  min-height: 56px;
+  border-radius: 0;
+  border: 0;
+  padding: 7px 8px;
+}
+
+.ipad-files-row > span {
+  min-width: 0;
+}
+
+.ipad-files-row:not(.ipad-files-row--head) > span:nth-child(3),
+.ipad-files-row:not(.ipad-files-row--head) > span:nth-child(4) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ipad-files-row:not(.ipad-files-row--head) {
+  border-bottom: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files-row:not(.ipad-files-row--head):hover,
+.ipad-files-row.is-selected,
+.ipad-files-row.is-checked {
+  background: var(--mc-surface-hover);
+}
+
+.ipad-files-row--head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--mc-bg-chat);
+  min-height: 32px;
+  border-bottom: 1px solid var(--mc-border-soft);
+}
+
+.ipad-files-row__check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ipad-files-row__check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--mc-accent);
+}
+
+.ipad-files-row__glyph {
+  width: 30px;
+  height: 30px;
+  flex-basis: 30px;
+  border: 1px solid oklch(from var(--files-green-bright) l c h / .24);
+  background: oklch(from var(--files-green) l c h / .12);
+  color: var(--files-green-bright);
+}
+
+.ipad-files-row__glyph--pdf,
+.ipad-files-row__glyph--file {
+  border-color: oklch(from var(--files-green-bright) l c h / .22);
+  background: oklch(from var(--files-green) l c h / .12);
+  color: var(--files-green-bright);
+}
+
+.ipad-files-row__glyph--plan,
+.ipad-files-row__glyph--link {
+  border-color: oklch(from var(--files-chat-teal) l c h / .22);
+  background: oklch(from var(--files-chat-teal) l c h / .12);
+  color: var(--files-chat-teal);
+}
+
+.ipad-files-row__glyph--image {
+  border-color: oklch(from var(--mc-green) l c h / .22);
+  background: oklch(from var(--mc-green) l c h / .12);
+  color: var(--mc-green);
+}
+
+.ipad-files-row__glyph--video,
+.ipad-files-row__glyph--chat {
+  border-color: oklch(from var(--mc-text-mute) l c h / .20);
+  background: oklch(from var(--mc-text-mute) l c h / .10);
+  color: var(--mc-text-mute);
+}
+
+.ipad-files-row__glyph--sheet {
+  border-color: oklch(from var(--mc-green) l c h / .20);
+  background: oklch(from var(--mc-green) l c h / .10);
+  color: var(--mc-green);
+}
+
+.ipad-files-row__glyph--presentation {
+  border-color: oklch(from var(--mc-red) l c h / .20);
+  background: oklch(from var(--mc-red) l c h / .10);
+  color: var(--mc-red);
+}
+
+.ipad-files-row__glyph--archive {
+  border-color: oklch(from var(--mc-amber) l c h / .22);
+  background: oklch(from var(--mc-amber) l c h / .11);
+  color: var(--mc-amber);
+}
+
+.ipad-files-row__preview {
+  display: none;
+}
+
+.ipad-files-row__quick {
+  display: flex;
+  justify-content: flex-end;
+  gap: 3px;
+  opacity: 0;
+  min-width: 0;
+}
+
+.ipad-files-row__quick span {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ipad-files-row:hover .ipad-files-row__quick,
+.ipad-files-row.is-selected .ipad-files-row__quick,
+.ipad-files-row.is-checked .ipad-files-row__quick {
+  opacity: 1;
+}
+
+.ipad-files-row__quick span:hover {
+  background: var(--mc-surface-hover);
+  color: var(--mc-text);
+}
+
+.ipad-files[data-preview="open"] .ipad-files__table[data-view="list"] {
+  overflow-x: hidden;
+}
+
+.ipad-files[data-preview="open"] .ipad-files__table[data-view="list"] .ipad-files-row {
+  grid-template-columns: 28px minmax(0, 1fr) minmax(124px, .48fr) 32px;
+}
+
+.ipad-files[data-preview="open"] .ipad-files__table[data-view="list"] .ipad-files-row--head > span:nth-child(4),
+.ipad-files[data-preview="open"] .ipad-files__table[data-view="list"] .ipad-files-row:not(.ipad-files-row--head) > span:nth-child(5) {
+  display: none;
+}
+
+.ipad-files[data-preview="open"] .ipad-files__table[data-view="list"] .ipad-files-row:not(.ipad-files-row--head) > span:nth-child(4) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.ipad-files[data-preview="open"] .ipad-files__table[data-view="list"] .ipad-files-row__quick {
+  gap: 0;
+}
+
+.ipad-files[data-preview="open"] .ipad-files__table[data-view="list"] .ipad-files-row__quick span {
+  width: 24px;
+  height: 24px;
+}
+
+.ipad-files[data-preview="open"] .ipad-files__toolbar {
+  align-items: flex-start;
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+
+.ipad-files[data-preview="open"] .ipad-files__actions {
+  flex: 0 0 auto;
+}
+
+.ipad-files[data-preview="open"] .ipad-files__title h2 {
+  max-width: 100%;
+}
+
+.ipad-files__table[data-view="grid"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  align-content: start;
+  align-items: start;
+  gap: 12px;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row--head {
+  display: none;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files__folder-grid,
+.ipad-files__table[data-view="grid"] .ipad-files__empty {
+  grid-column: 1 / -1;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row:not(.ipad-files-row--head) {
+  height: 254px;
+  grid-template-columns: 26px minmax(0, 1fr) 56px;
+  grid-template-rows: 136px minmax(0, 1fr) auto auto;
+  align-items: start;
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 8px;
+  background: oklch(from var(--mc-surface) l c h / .68);
+  box-shadow: 0 6px 18px oklch(0 0 0 / .10);
+  padding: 10px;
+  gap: 6px 10px;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row:not(.ipad-files-row--head):hover,
+.ipad-files__table[data-view="grid"] .ipad-files-row.is-selected,
+.ipad-files__table[data-view="grid"] .ipad-files-row.is-checked {
+  background: var(--mc-surface);
+  border-color: oklch(from var(--files-green-bright) l c h / .30);
+  box-shadow: 0 8px 22px oklch(0 0 0 / .14);
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row__preview {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  height: 136px;
+  border-radius: 7px;
+  border: 1px solid var(--mc-border-soft);
+  background:
+    linear-gradient(135deg, oklch(from var(--mc-text-mute) l c h / .06), transparent 62%),
+    var(--mc-bg-chat);
+  color: var(--mc-text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  overflow: hidden;
+  position: relative;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row__preview-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ipad-files-row__preview-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ipad-files-row__preview-label {
+  position: absolute;
+  right: 8px;
+  bottom: 7px;
+  max-width: calc(100% - 16px);
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: oklch(0 0 0 / .22);
+  color: var(--mc-text-mute);
+  font-size: 9px;
+  line-height: 1;
+  z-index: 2;
+}
+
+.ipad-files-row__mock-preview {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.ipad-files-row__mock-preview--document {
+  background:
+    linear-gradient(var(--mc-text-mute), var(--mc-text-mute)) center 17px / 46% 2px no-repeat,
+    linear-gradient(var(--mc-text-dim), var(--mc-text-dim)) center 28px / 62% 2px no-repeat,
+    linear-gradient(var(--mc-text-dim), var(--mc-text-dim)) center 39px / 52% 2px no-repeat,
+    oklch(from var(--files-green) l c h / .08);
+}
+
+.ipad-files-row__mock-preview--plan,
+.ipad-files-row__mock-preview--drawing {
+  background:
+    linear-gradient(90deg, oklch(from var(--files-chat-teal) l c h / .12) 1px, transparent 1px),
+    linear-gradient(oklch(from var(--files-chat-teal) l c h / .12) 1px, transparent 1px),
+    oklch(from var(--files-chat-teal) l c h / .07);
+  background-size: 18px 18px;
+}
+
+.ipad-files-row__mock-preview--plan span:nth-child(1),
+.ipad-files-row__mock-preview--drawing span:nth-child(1) {
+  position: absolute;
+  inset: 14px 30px 16px 18px;
+  border: 1px solid oklch(from var(--files-chat-teal) l c h / .35);
+}
+
+.ipad-files-row__mock-preview--plan span:nth-child(2),
+.ipad-files-row__mock-preview--drawing span:nth-child(2) {
+  position: absolute;
+  left: 38px;
+  top: 14px;
+  bottom: 16px;
+  border-left: 1px solid oklch(from var(--files-chat-teal) l c h / .30);
+}
+
+.ipad-files-row__mock-preview--rendering {
+  background:
+    radial-gradient(circle at 72% 30%, oklch(from var(--files-green-bright) l c h / .18), transparent 20%),
+    linear-gradient(135deg, oklch(from var(--files-chat-teal) l c h / .14), transparent 58%),
+    oklch(from var(--files-green) l c h / .08);
+}
+
+.ipad-files-row__mock-preview--rendering span:nth-child(1) {
+  position: absolute;
+  right: 52px;
+  top: 12px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: oklch(from var(--files-green-bright) l c h / .18);
+}
+
+.ipad-files-row__mock-preview--rendering span:nth-child(2) {
+  position: absolute;
+  left: 24px;
+  bottom: 15px;
+  width: 26px;
+  height: 22px;
+  border-radius: 3px 3px 0 0;
+  background: oklch(from var(--mc-bg-chat) l c h / .42);
+}
+
+.ipad-files-row__mock-preview--rendering span:nth-child(3) {
+  position: absolute;
+  right: 28px;
+  bottom: 15px;
+  width: 38px;
+  height: 28px;
+  border-radius: 4px 4px 0 0;
+  background: oklch(from var(--mc-bg-chat) l c h / .36);
+}
+
+.ipad-files-row__mock-preview--photo,
+.ipad-files-row__mock-preview--video {
+  background:
+    linear-gradient(145deg, oklch(from var(--mc-green) l c h / .18), transparent 56%),
+    radial-gradient(circle at 76% 30%, oklch(from var(--mc-green) l c h / .24), transparent 18%),
+    oklch(from var(--mc-green) l c h / .08);
+}
+
+.ipad-files-row__mock-preview--photo span:nth-child(1),
+.ipad-files-row__mock-preview--video span:nth-child(1) {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  height: 18px;
+  clip-path: polygon(0 100%, 28% 38%, 48% 72%, 66% 28%, 100% 100%);
+  background: oklch(from var(--mc-green) l c h / .34);
+}
+
+.ipad-files-row__mock-preview--video::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  border-left: 10px solid var(--mc-text);
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  opacity: .72;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row__name {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0;
+  min-height: 0;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row__glyph {
+  display: none;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row__name > span:last-child {
+  width: 100%;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row__name strong {
+  font-size: 13px;
+  line-height: 1.25;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row__name small {
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row > span:nth-child(4),
+.ipad-files__table[data-view="grid"] .ipad-files-row > span:nth-child(5) {
+  grid-column: 1 / -1;
+  color: var(--mc-text-dim);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row > span:nth-child(4) {
+  grid-row: 3;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row > span:nth-child(5) {
+  grid-column: 1 / -1;
+  grid-row: 4;
+  color: var(--mc-text-dim);
+  font-size: 12px;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row__quick {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  opacity: 0;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row__check {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: start;
+  opacity: 0;
+}
+
+.ipad-files__table[data-view="grid"] .ipad-files-row:hover .ipad-files-row__check,
+.ipad-files__table[data-view="grid"] .ipad-files-row.is-selected .ipad-files-row__check,
+.ipad-files__table[data-view="grid"] .ipad-files-row.is-checked .ipad-files-row__check {
+  opacity: 1;
+}
+
+.ipad-files__preview {
+  background: var(--mc-bg-rail);
+}
+
+.ipad-files-previewbox {
+  background: var(--mc-bubble-other);
+}
+
+@media (max-width: 1180px) {
+  .ipad-files {
+    grid-template-columns: minmax(240px, min(var(--files-sidebar-w, 280px), 380px)) minmax(0, 1fr);
+  }
+
+  .ipad-files[data-preview="open"] {
+    grid-template-columns: minmax(240px, min(var(--files-sidebar-w, 280px), 380px)) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 820px) {
+  .ipad-files {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ipad-files__content {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .ipad-files__actions,
+  .ipad-files__controls {
+    width: 100%;
+  }
+
+  .ipad-files__actions {
+    justify-content: flex-start;
+  }
+
+  .ipad-files__search {
+    flex-basis: 100%;
+  }
+
+  .ipad-files__crumbs {
+    display: none;
+  }
+
+  .ipad-files-row {
+    grid-template-columns: 28px 1fr 52px;
+    position: relative;
+  }
+
+  .ipad-files__table[data-view="list"] .ipad-files-row:not(.ipad-files-row--head) {
+    min-height: 70px;
+    grid-template-columns: 28px minmax(0, 1fr) 62px;
+    grid-template-rows: auto auto;
+    align-items: center;
+    padding: 8px 10px;
+  }
+
+  .ipad-files__table[data-view="list"] .ipad-files-row__name {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .ipad-files__table[data-view="list"] .ipad-files-row > span:nth-child(3),
+  .ipad-files__table[data-view="list"] .ipad-files-row > span:nth-child(4) {
+    display: none;
+  }
+
+  .ipad-files__table[data-view="list"] .ipad-files-row__quick {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mecca · Phone</title>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="14" fill="#1a1a1f"/><rect x="32" y="20" width="36" height="60" rx="6" fill="none" stroke="#e8e6df" stroke-width="2"/><circle cx="50" cy="74" r="2" fill="#e8e6df"/><rect x="38" y="32" width="24" height="3" rx="1.5" fill="#5a8de8"/><rect x="38" y="40" width="20" height="3" rx="1.5" fill="#5ec88a"/><rect x="38" y="48" width="22" height="3" rx="1.5" fill="#e8a04b"/></svg></template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="phone-styles.css">
+<link rel="stylesheet" href="phone-topbar.css">
+<link rel="stylesheet" href="phone-notifications.css">
+<link rel="stylesheet" href="phone-extras.css">
+<link rel="stylesheet" href="phone-projsummary.css">
+<link rel="stylesheet" href="phone-topbar-variants.css">
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #f0eee9; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+    padding: 40px 24px;
+    box-sizing: border-box;
+  }
+  .phone-mount { height: 100%; display: flex; padding-top: 60px; box-sizing: border-box; }
+  .phone-mount > .ph-app { flex: 1; min-height: 0; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="data.js"></script>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="components-rail.jsx"></script>
+<script type="text/babel" src="components-details.jsx"></script>
+<script type="text/babel" src="phone-components.jsx"></script>
+<script type="text/babel" src="phone-details.jsx"></script>
+<script type="text/babel" src="phone-modnav.jsx"></script>
+<script type="text/babel" src="phone-notifications.jsx"></script>
+<script type="text/babel" src="phone-projsummary.jsx"></script>
+<script type="text/babel" src="phone-topbar-variants.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script src="phone-variants.js"></script>
+<script type="text/babel" src="phone-app.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+document.documentElement.setAttribute('data-theme', 'dark');
+
+const IOSDevice = window.IOSDevice;
+const PhoneApp = window.PhoneApp;
+
+function App() {
+  return (
+    <IOSDevice width={390} height={844} dark={true}>
+      <div className="phone-mount" data-theme="dark">
+        <PhoneApp variant="hybrid" />
+      </div>
+    </IOSDevice>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

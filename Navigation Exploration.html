@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mecca · Navigation Exploration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="nav-shells.css">
+<style>
+  /* Force dark theme tokens for the artboards in this exploration */
+  :root { --mc-accent-h: 252; }
+  html, body { background: #f0eee9; }
+  /* Make artboard shells inherit dark tokens regardless of root data-theme */
+  .ns-shell {
+    --mc-bg-app:        oklch(0.16 0.01 270);
+    --mc-bg-rail:       oklch(0.13 0.012 270);
+    --mc-bg-inbox:      oklch(0.18 0.012 270);
+    --mc-bg-chat:       oklch(0.21 0.012 270);
+    --mc-bg-sunken:     oklch(0.14 0.012 270);
+    --mc-surface:       oklch(0.24 0.014 270);
+    --mc-surface-hi:    oklch(0.28 0.016 270);
+    --mc-surface-hover: oklch(0.26 0.014 270);
+    --mc-border:        oklch(0.30 0.014 270);
+    --mc-border-soft:   oklch(0.25 0.012 270);
+    --mc-text:          oklch(0.96 0.005 270);
+    --mc-text-mute:     oklch(0.72 0.008 270);
+    --mc-text-dim:      oklch(0.58 0.010 270);
+    --mc-accent:        oklch(0.70 0.18 var(--mc-accent-h));
+    --mc-accent-fg:     oklch(0.99 0.01 var(--mc-accent-h));
+    --mc-accent-tint:   oklch(0.26 0.05 var(--mc-accent-h));
+    --mc-bubble-other:  oklch(0.28 0.012 270);
+    --mc-bubble-other-fg: oklch(0.96 0.005 270);
+    --mc-red:    oklch(0.66 0.20 25);
+    --mc-amber:  oklch(0.78 0.16 70);
+    --mc-green:  oklch(0.70 0.16 155);
+    --mc-blue:   oklch(0.70 0.16 245);
+    --mc-violet: oklch(0.70 0.18 295);
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="nav-shells.jsx"></script>
+<script type="text/babel" src="nav-explorer.jsx"></script>
+</body>
+</html>

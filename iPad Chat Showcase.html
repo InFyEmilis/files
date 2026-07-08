@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mecca · iPad — Landscape & Portrait</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body, #root { height: 100%; margin: 0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #0f1014;
+    color: #e6e7ec;
+  }
+  /* iPad-device-shaped frames around each artboard iframe */
+  .ipad-frame {
+    width: 100%; height: 100%;
+    background: #1a1b22;
+    border-radius: 18px;
+    padding: 14px 10px;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.06),
+      0 30px 80px -30px rgba(0,0,0,.55);
+    display: flex; flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .ipad-frame::before {
+    /* speaker pinhole at top */
+    content: '';
+    position: absolute;
+    top: 6px; left: 50%;
+    width: 38px; height: 2px;
+    background: #2a2c34;
+    border-radius: 2px;
+    transform: translateX(-50%);
+  }
+  .ipad-frame__screen {
+    flex: 1;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #16181c;
+    border: 1px solid rgba(255,255,255,.04);
+  }
+  .ipad-frame__screen > iframe {
+    width: 100%; height: 100%;
+    border: 0; display: block;
+  }
+  .ipad-frame__home {
+    /* home indicator at bottom (iPadOS) */
+    position: absolute;
+    bottom: 4px; left: 50%;
+    width: 90px; height: 4px;
+    background: #2a2c34;
+    border-radius: 2px;
+    transform: translateX(-50%);
+  }
+  /* Caption inside each artboard label area handled by canvas. */
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+const { DesignCanvas, DCSection, DCArtboard } = window;
+
+function IPadFrame({ src }) {
+  return (
+    <div className="ipad-frame">
+      <div className="ipad-frame__screen">
+        <iframe src={src} title="Mecca on iPad" loading="lazy" />
+      </div>
+      <div className="ipad-frame__home" />
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <DesignCanvas
+      title="Mecca · iPad — Master-detail (Option 2)"
+      subtitle="Sidebar drawer + 2 columns in landscape · drill-down in portrait. Same data model as the Mac build."
+    >
+      <DCSection
+        id="landscape"
+        title="Landscape — iPad Pro 11&quot;"
+        subtitle="1194 × 834 · three variants: web-style, iPad-native capsule, fully floating clusters"
+      >
+        <DCArtboard id="ipad-land-classic" label="Classic — web-style top bar" width={1194} height={834}>
+          <IPadFrame src="iPad Chat.html?nav=classic" />
+        </DCArtboard>
+        <DCArtboard id="ipad-land-native" label="iPad-native — floating capsule embedded in top bar" width={1194} height={834}>
+          <IPadFrame src="iPad Chat.html?nav=native" />
+        </DCArtboard>
+        <DCArtboard id="ipad-land-floating" label="Floating — three pills over content (Apple Photos / Music)" width={1194} height={834}>
+          <IPadFrame src="iPad Chat.html?nav=floating" />
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection
+        id="portrait"
+        title="Portrait — iPad Pro 11&quot;"
+        subtitle="834 × 1194 · drill-down: tap a thread to slide to chat · tap menu for drawer overlay"
+      >
+        <DCArtboard id="ipad-port-classic" label="Classic — icon-only tabs in portrait" width={834} height={1194}>
+          <IPadFrame src="iPad Chat.html?nav=classic" />
+        </DCArtboard>
+        <DCArtboard id="ipad-port-native" label="iPad-native — capsule with active label only" width={834} height={1194}>
+          <IPadFrame src="iPad Chat.html?nav=native" />
+        </DCArtboard>
+        <DCArtboard id="ipad-port-floating" label="Floating — three pills, search collapsed to icon" width={834} height={1194}>
+          <IPadFrame src="iPad Chat.html?nav=floating" />
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

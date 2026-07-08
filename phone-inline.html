@@ -1,0 +1,3902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mecca · Phone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Mecca Chat — design tokens + components */
+:root {
+  --mc-accent-h: 252;
+  --mc-radius: 12px;
+  --mc-radius-sm: 8px;
+  --mc-radius-lg: 18px;
+  --mc-bubble-radius: 18px;
+  --mc-font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mc-font-display: 'Inter', system-ui, sans-serif;
+  --mc-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+/* ── Theme tokens ──────────────────────────────────────────────────────── */
+:root[data-theme="dark"] {
+  --mc-bg-app:    oklch(0.16 0.01 270);
+  --mc-bg-rail:   oklch(0.13 0.012 270);
+  --mc-bg-inbox:  oklch(0.18 0.012 270);
+  --mc-bg-chat:   oklch(0.21 0.012 270);
+  --mc-bg-sunken: oklch(0.14 0.012 270);
+  --mc-surface:   oklch(0.24 0.014 270);
+  --mc-surface-hi:oklch(0.28 0.016 270);
+  --mc-surface-hover: oklch(0.26 0.014 270);
+
+  --mc-border:    oklch(0.30 0.014 270);
+  --mc-border-soft: oklch(0.25 0.012 270);
+
+  --mc-text:      oklch(0.96 0.005 270);
+  --mc-text-mute: oklch(0.72 0.008 270);
+  --mc-text-dim:  oklch(0.58 0.010 270);
+
+  --mc-accent:    oklch(0.70 0.18 var(--mc-accent-h));
+  --mc-accent-fg: oklch(0.99 0.01 var(--mc-accent-h));
+  --mc-accent-soft: oklch(0.32 0.10 var(--mc-accent-h));
+  --mc-accent-tint: oklch(0.26 0.05 var(--mc-accent-h));
+
+  --mc-bubble-other: oklch(0.28 0.012 270);
+  --mc-bubble-other-fg: oklch(0.96 0.005 270);
+
+  --mc-red:    oklch(0.66 0.20 25);
+  --mc-amber:  oklch(0.78 0.16 70);
+  --mc-green:  oklch(0.70 0.16 155);
+  --mc-blue:   oklch(0.70 0.16 245);
+  --mc-violet: oklch(0.70 0.18 295);
+
+  --mc-shadow-sm: 0 1px 2px rgba(0,0,0,.30);
+  --mc-shadow-md: 0 6px 20px -6px rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.30);
+  --mc-shadow-lg: 0 20px 50px -16px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.25);
+}
+
+:root[data-theme="light"] {
+  --mc-bg-app:    oklch(0.99 0.003 270);
+  --mc-bg-rail:   oklch(0.97 0.005 270);
+  --mc-bg-inbox:  oklch(0.985 0.004 270);
+  --mc-bg-chat:   oklch(1 0 0);
+  --mc-bg-sunken: oklch(0.95 0.005 270);
+  --mc-surface:   oklch(0.97 0.005 270);
+  --mc-surface-hi:oklch(0.94 0.006 270);
+  --mc-surface-hover: oklch(0.95 0.005 270);
+
+  --mc-border:    oklch(0.89 0.006 270);
+  --mc-border-soft: oklch(0.93 0.005 270);
+
+  --mc-text:      oklch(0.20 0.012 270);
+  --mc-text-mute: oklch(0.45 0.012 270);
+  --mc-text-dim:  oklch(0.62 0.010 270);
+
+  --mc-accent:    oklch(0.55 0.20 var(--mc-accent-h));
+  --mc-accent-fg: oklch(0.99 0.01 var(--mc-accent-h));
+  --mc-accent-soft: oklch(0.94 0.04 var(--mc-accent-h));
+  --mc-accent-tint: oklch(0.97 0.02 var(--mc-accent-h));
+
+  --mc-bubble-other: oklch(0.94 0.006 270);
+  --mc-bubble-other-fg: oklch(0.18 0.012 270);
+
+  --mc-red:    oklch(0.58 0.22 25);
+  --mc-amber:  oklch(0.70 0.18 70);
+  --mc-green:  oklch(0.58 0.16 155);
+  --mc-blue:   oklch(0.58 0.18 245);
+  --mc-violet: oklch(0.55 0.20 295);
+
+  --mc-shadow-sm: 0 1px 2px rgba(15,23,42,.06);
+  --mc-shadow-md: 0 6px 20px -8px rgba(15,23,42,.12), 0 1px 2px rgba(15,23,42,.06);
+  --mc-shadow-lg: 0 20px 50px -20px rgba(15,23,42,.20), 0 2px 6px rgba(15,23,42,.08);
+}
+
+/* ── Reset + base ──────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  background: var(--mc-bg-app);
+  color: var(--mc-text);
+  font-family: var(--mc-font);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+button { font: inherit; color: inherit; background: transparent; border: 0; padding: 0; cursor: pointer; }
+input, textarea, select { font: inherit; color: inherit; }
+h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.011em; }
+kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  font-family: var(--mc-font); font-size: 10px;
+  background: var(--mc-surface); color: var(--mc-text-mute);
+  border: 1px solid var(--mc-border-soft); border-radius: 4px;
+}
+
+/* ── Shell layout ──────────────────────────────────────────────────────── */
+.mc-shell {
+  display: grid;
+  grid-template-columns: auto 360px 1fr;
+  height: 100vh;
+  background: var(--mc-bg-app);
+}
+.mc-shell[data-sidebar="expanded"] { grid-template-columns: 280px 360px 1fr; }
+.mc-shell[data-sidebar="rail"]     { grid-template-columns: 72px  360px 1fr; }
+.mc-shell[data-sidebar="collapsed"]{ grid-template-columns: 56px  360px 1fr; }
+
+.mc-inbox-col, .mc-chat-col {
+  display: flex; flex-direction: column;
+  min-width: 0; min-height: 0;
+}
+.mc-inbox-col {
+  background: var(--mc-bg-inbox);
+  border-right: 1px solid var(--mc-border-soft);
+}
+.mc-chat-col { background: var(--mc-bg-chat); }
+
+/* ── Generic icon button ──────────────────────────────────────────────── */
+.mc-iconbtn {
+  width: 30px; height: 30px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  color: var(--mc-text-mute);
+  transition: background 120ms, color 120ms;
+}
+.mc-iconbtn:hover { background: var(--mc-surface-hover); color: var(--mc-text); }
+
+/* ── Avatars ───────────────────────────────────────────────────────────── */
+.mc-avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-weight: 600; letter-spacing: 0.02em;
+  flex-shrink: 0; user-select: none;
+  font-family: var(--mc-font);
+}
+.mc-avatar--ring { box-shadow: 0 0 0 2px var(--mc-bg-rail); }
+.mc-avatar-stack { display: inline-flex; align-items: center; }
+.mc-avatar--more {
+  background: var(--mc-surface-hi);
+  color: var(--mc-text-mute);
+  font-weight: 600;
+}
+
+/* ── Project Bubble Rail ──────────────────────────────────────────────── */
+.mc-rail {
+  background: var(--mc-bg-rail);
+  border-right: 1px solid var(--mc-border-soft);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.mc-rail__brand {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 14px 10px;
+  position: relative;
+}
+.mc-logo {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 9px;
+  background: linear-gradient(140deg, var(--mc-accent), oklch(0.50 0.18 calc(var(--mc-accent-h) - 30)));
+  color: white; font-weight: 700; font-size: 14px;
+  box-shadow: var(--mc-shadow-sm), inset 0 1px 0 rgba(255,255,255,.18);
+}
+.mc-rail__brandname {
+  font-size: 15px; font-weight: 600; letter-spacing: -0.01em;
+}
+.mc-rail__expand-mini {
+  position: absolute; right: 8px; bottom: -6px;
+  width: 22px; height: 22px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 6px;
+  background: var(--mc-surface);
+  color: var(--mc-text-mute);
+  border: 1px solid var(--mc-border-soft);
+  opacity: 0; transition: opacity 120ms;
+}
+.mc-rail:hover .mc-rail__expand-mini { opacity: 1; }
+.mc-rail__expand-mini:hover { color: var(--mc-text); }
+
+.mc-rail__scroll {
+  flex: 1; overflow-y: auto;
+  padding: 4px 8px 8px;
+}
+.mc-rail__divider {
+  height: 1px; background: var(--mc-border-soft);
+  margin: 6px 8px;
+}
+
+.mc-rail__section { padding: 4px 0 8px; }
+.mc-rail__section-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--mc-text-dim);
+  padding: 6px 12px 4px;
+}
+.mc-rail__section-tick {
+  height: 1px; width: 18px; background: var(--mc-border);
+  margin: 8px auto 6px;
+  opacity: .5;
+}
+
+/* Row */
+.mc-rail__row {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 10px;
+  transition: background 120ms;
+  position: relative;
+}
+.mc-rail__row:hover { background: var(--mc-surface-hover); }
+.mc-rail__row.is-selected { background: var(--mc-accent-tint); }
+.mc-rail__row.is-selected::before {
+  content: ''; position: absolute; left: -8px; top: 8px; bottom: 8px;
+  width: 3px; border-radius: 0 3px 3px 0;
+  background: var(--mc-accent);
+}
+.mc-rail--rail .mc-rail__row { justify-content: center; padding: 5px 6px; }
+
+.mc-rail__bubble {
+  position: relative;
+  width: 40px; height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 11px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+  flex-shrink: 0;
+  transition: transform 140ms, border-radius 200ms, background 120ms;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.mc-rail__row:hover .mc-rail__bubble { border-radius: 13px; }
+.mc-rail__row.is-selected .mc-rail__bubble { border-radius: 13px; }
+.mc-rail__bubble--dm {
+  background: var(--mc-surface);
+  color: var(--mc-text);
+}
+
+.mc-rail__priority {
+  position: absolute; top: -3px; right: -3px;
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--mc-bg-rail);
+}
+.mc-rail__priority--crit { background: var(--mc-red); }
+.mc-rail__priority--high { background: var(--mc-amber); }
+
+.mc-rail__badge {
+  position: absolute; top: -5px; right: -5px;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: 9px;
+  background: var(--mc-text); color: var(--mc-bg-rail);
+  font-size: 10px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 2px solid var(--mc-bg-rail);
+}
+
+.mc-rail__rowtext {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column;
+}
+.mc-rail__name {
+  font-size: 13px; font-weight: 500;
+  color: var(--mc-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mc-rail__reason {
+  font-size: 11px; color: var(--mc-text-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mc-rail__chips {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  margin-top: 4px;
+}
+.mc-rail__chip {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 6px;
+  font-size: 10px; font-weight: 600;
+  border-radius: 99px;
+  border: 1px solid transparent;
+  line-height: 1;
+}
+.mc-rail__count {
+  font-size: 11px; font-weight: 600;
+  color: var(--mc-text-mute);
+  background: var(--mc-surface);
+  padding: 2px 6px; border-radius: 8px;
+  min-width: 20px; text-align: center;
+}
+.mc-rail__row.is-selected .mc-rail__count {
+  background: var(--mc-surface-hi); color: var(--mc-text);
+}
+
+.mc-rail__foot {
+  padding: 10px 12px;
+  border-top: 1px solid var(--mc-border-soft);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.mc-rail--rail .mc-rail__foot { flex-direction: column; gap: 8px; }
+
+/* Collapsed rail */
+.mc-rail--collapsed {
+  align-items: center;
+  padding-top: 14px;
+  gap: 12px;
+}
+.mc-rail--collapsed .mc-rail__expand {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  color: var(--mc-text-mute);
+}
+.mc-rail--collapsed .mc-rail__expand:hover { background: var(--mc-surface-hover); color: var(--mc-text); }
+
+/* ── Inbox ─────────────────────────────────────────────────────────────── */
+.mc-inbox {
+  display: flex; flex-direction: column;
+  height: 100%; min-height: 0;
+}
+.mc-inbox__head {
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--mc-border-soft);
+}
+.mc-inbox__title {
+  display: flex; align-items: center; gap: 10px;
+}
+.mc-inbox__title h2 {
+  font-size: 17px; font-weight: 600; letter-spacing: -0.015em;
+  flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mc-inbox__chip {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 9px;
+  font-weight: 600; font-size: 12px;
+  flex-shrink: 0;
+}
+.mc-inbox__titlecol { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.mc-inbox__titlecol h2 { font-size: 16px; }
+.mc-inbox__pill {
+  font-size: 11px; font-weight: 500;
+  background: var(--mc-surface);
+  color: var(--mc-text-mute);
+  padding: 2px 8px; border-radius: 99px;
+  border: 1px solid var(--mc-border-soft);
+}
+.mc-inbox__subtitle {
+  font-size: 12px; color: var(--mc-text-dim);
+  margin: 2px 0 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mc-inbox__stats {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 10px;
+}
+.mc-inbox__stat {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 500;
+  color: var(--mc-text-mute);
+  background: var(--mc-surface);
+  padding: 3px 9px; border-radius: 99px;
+  border: 1px solid var(--mc-border-soft);
+}
+.mc-inbox__stat-dot { width: 6px; height: 6px; border-radius: 50%; }
+.mc-inbox__stat-dot--blue   { background: var(--mc-blue); }
+.mc-inbox__stat-dot--red    { background: var(--mc-red); }
+.mc-inbox__stat-dot--amber  { background: var(--mc-amber); }
+.mc-inbox__stat-dot--violet { background: var(--mc-violet); }
+
+.mc-inbox__nav {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 12px;
+}
+.mc-inbox__navbtn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  font-size: 12px; font-weight: 500;
+  color: var(--mc-text-mute);
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 8px;
+  transition: background 120ms, color 120ms, border-color 120ms;
+}
+.mc-inbox__navbtn:hover {
+  background: var(--mc-surface-hi);
+  color: var(--mc-text);
+  border-color: var(--mc-border);
+}
+.mc-inbox__navbtn--primary {
+  color: var(--mc-text);
+  background: var(--mc-surface-hi);
+  border-color: var(--mc-border);
+}
+.mc-inbox__navcount {
+  font-size: 10px; font-weight: 600;
+  color: var(--mc-text-dim);
+  background: var(--mc-bg-inbox);
+  padding: 0 5px; border-radius: 99px;
+  min-width: 16px; text-align: center;
+}
+
+.mc-inbox__toolbar {
+  display: flex; gap: 8px;
+  padding: 10px 14px 8px;
+}
+.mc-search {
+  flex: 1;
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 10px;
+  height: 32px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 9px;
+  color: var(--mc-text-mute);
+  transition: border-color 120ms, background 120ms;
+}
+.mc-search:focus-within {
+  background: var(--mc-bg-chat);
+  border-color: var(--mc-accent);
+  box-shadow: 0 0 0 3px oklch(from var(--mc-accent) l c h / 0.15);
+}
+.mc-search input {
+  flex: 1; background: transparent; border: 0; outline: 0;
+  font-size: 13px; color: var(--mc-text);
+}
+.mc-search input::placeholder { color: var(--mc-text-dim); }
+.mc-search__clear {
+  width: 18px; height: 18px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--mc-surface-hi); color: var(--mc-text-mute);
+  font-size: 14px; line-height: 1;
+}
+
+.mc-segmented {
+  display: inline-flex; gap: 2px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 9px;
+  padding: 2px;
+}
+.mc-segmented button {
+  padding: 4px 10px;
+  border-radius: 7px;
+  font-size: 12px; font-weight: 500;
+  color: var(--mc-text-mute);
+}
+.mc-segmented button:hover { color: var(--mc-text); }
+.mc-segmented button.is-active {
+  background: var(--mc-bg-chat);
+  color: var(--mc-text);
+  box-shadow: var(--mc-shadow-sm);
+}
+
+.mc-inbox__scroll {
+  flex: 1; overflow-y: auto;
+  padding: 4px 6px 12px;
+}
+
+/* Sections in inbox */
+.mc-section { padding: 4px 0; }
+.mc-section__head {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%;
+  padding: 8px 10px 6px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--mc-text-dim);
+}
+.mc-section__head:hover { color: var(--mc-text-mute); }
+.mc-section__chev { transition: transform 160ms; }
+.mc-section__chev.is-rot { transform: rotate(-90deg); }
+.mc-section__glyph { display: inline-flex; }
+.mc-section__label { flex: 1; text-align: left; }
+.mc-section__count { font-weight: 600; color: var(--mc-text-dim); text-transform: none; letter-spacing: 0; font-size: 11px; }
+.mc-section__unread {
+  background: var(--mc-surface-hi); color: var(--mc-text);
+  padding: 1px 7px; border-radius: 99px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0;
+  text-transform: none;
+}
+.mc-section__body { display: flex; flex-direction: column; gap: 1px; padding: 0 4px; }
+.mc-section__body--top { padding-top: 6px; }
+
+/* ── Conversation row ──────────────────────────────────────────────────── */
+.mc-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  width: 100%;
+  padding: 10px 10px;
+  border-radius: 10px;
+  text-align: left;
+  transition: background 120ms;
+  position: relative;
+}
+.mc-row--compact { padding: 7px 10px; gap: 10px; }
+.mc-row--spacious { padding: 13px 12px; gap: 14px; }
+.mc-row:hover { background: var(--mc-surface-hover); }
+.mc-row.is-selected { background: var(--mc-accent-tint); }
+.mc-row.is-selected::before {
+  content: ''; position: absolute; left: 0; top: 12px; bottom: 12px;
+  width: 3px; border-radius: 0 3px 3px 0;
+  background: var(--mc-accent);
+}
+
+.mc-row__lead { position: relative; flex-shrink: 0; }
+.mc-row__icon {
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 10px;
+  background: oklch(from var(--mc-text) 0.30 0.04 var(--h, 220) / 1);
+  background: linear-gradient(135deg, oklch(0.30 0.06 var(--h, 220)), oklch(0.24 0.04 var(--h, 220)));
+  color: oklch(0.90 0.10 var(--h, 220));
+  box-shadow: inset 0 0 0 1px oklch(0.45 0.08 var(--h, 220) / .35);
+}
+:root[data-theme="light"] .mc-row__icon {
+  background: linear-gradient(135deg, oklch(0.96 0.04 var(--h, 220)), oklch(0.92 0.05 var(--h, 220)));
+  color: oklch(0.45 0.18 var(--h, 220));
+  box-shadow: inset 0 0 0 1px oklch(0.85 0.06 var(--h, 220));
+}
+.mc-row__unreaddot {
+  position: absolute; top: -1px; right: -1px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--mc-text);
+  border: 2px solid var(--mc-bg-inbox);
+}
+
+.mc-row__body {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.mc-row__top {
+  display: flex; align-items: center; gap: 6px;
+}
+.mc-row__title {
+  flex: 1; min-width: 0;
+  font-size: 13.5px; font-weight: 500;
+  color: var(--mc-text-mute);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mc-row__title.is-unread { color: var(--mc-text); font-weight: 600; }
+.mc-row.is-selected .mc-row__title { color: var(--mc-text); }
+.mc-row__time { font-size: 11px; color: var(--mc-text-dim); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.mc-row__sub {
+  display: flex; align-items: center; gap: 8px;
+  min-width: 0;
+}
+.mc-row__preview {
+  flex: 1; min-width: 0;
+  font-size: 12.5px; color: var(--mc-text-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.4;
+}
+.mc-row__sender { color: var(--mc-text-mute); font-weight: 500; }
+.mc-row__badge {
+  background: var(--mc-surface-hi); color: var(--mc-text);
+  padding: 1px 7px; border-radius: 99px;
+  font-size: 10px; font-weight: 600;
+  flex-shrink: 0;
+}
+.mc-row__meta { font-size: 11px; color: var(--mc-text-dim); margin-top: 2px; }
+
+.mc-pdot {
+  width: 5px; height: 5px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.mc-pdot--p1 { background: var(--mc-red); }
+.mc-pdot--p2 { background: var(--mc-amber); }
+
+.mc-typechip {
+  width: 14px; height: 14px; border-radius: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: oklch(0.25 0.05 var(--h));
+  color: oklch(0.85 0.10 var(--h));
+}
+
+/* Empty state */
+.mc-empty {
+  padding: 40px 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--mc-text-dim);
+  text-align: center;
+}
+.mc-empty p { margin: 0; font-size: 13px; }
+.mc-empty--big { padding: 80px 24px; }
+.mc-empty--big p { font-size: 14px; color: var(--mc-text-mute); }
+
+/* ── Chat pane ─────────────────────────────────────────────────────────── */
+.mc-chat {
+  display: flex; flex-direction: column;
+  height: 100%; min-height: 0;
+  background: var(--mc-bg-chat);
+}
+.mc-chat--empty { align-items: center; justify-content: center; }
+
+/* Chat background — subtle Mecca line-art pattern, WhatsApp style */
+.mc-chat::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url('assets/chat-bg.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: local;
+  opacity: 0.22;
+  pointer-events: none;
+  z-index: 0;
+}
+:root[data-theme="light"] .mc-chat::before {
+  opacity: 0.10;
+  filter: invert(1) hue-rotate(180deg);
+}
+.mc-chat { position: relative; }
+.mc-chat__head, .mc-chat__context, .mc-chat__stream, .mc-composer { position: relative; z-index: 1; }
+.mc-chat__head, .mc-composer { background: var(--mc-bg-chat); }
+.mc-chat__stream { background: transparent; }
+
+.mc-chat__head {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--mc-border-soft);
+  flex-shrink: 0;
+}
+.mc-chat__head-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.mc-chat__head-icon {
+  width: 38px; height: 38px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 11px;
+  background: linear-gradient(135deg, oklch(0.32 0.08 var(--h, 220)), oklch(0.24 0.05 var(--h, 220)));
+  color: oklch(0.92 0.10 var(--h, 220));
+  box-shadow: inset 0 0 0 1px oklch(0.45 0.10 var(--h, 220) / .4);
+  flex-shrink: 0;
+}
+:root[data-theme="light"] .mc-chat__head-icon {
+  background: linear-gradient(135deg, oklch(0.95 0.05 var(--h, 220)), oklch(0.90 0.06 var(--h, 220)));
+  color: oklch(0.42 0.18 var(--h, 220));
+  box-shadow: inset 0 0 0 1px oklch(0.82 0.08 var(--h, 220));
+}
+.mc-chat__head-text { flex: 1; min-width: 0; }
+.mc-chat__head-titlerow { display: flex; align-items: center; gap: 8px; }
+.mc-chat__head-titlerow h1 {
+  font-size: 16px; font-weight: 600; letter-spacing: -0.012em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mc-chat__pill {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 2px 8px; border-radius: 99px;
+}
+.mc-chat__pill--crit { background: oklch(from var(--mc-red) l c h / .18); color: var(--mc-red); }
+.mc-chat__pill--high { background: oklch(from var(--mc-amber) l c h / .18); color: var(--mc-amber); }
+
+.mc-chat__head-sub {
+  font-size: 12px; color: var(--mc-text-dim);
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 2px;
+  white-space: nowrap; overflow: hidden;
+}
+.mc-chat__breadcrumb { display: inline-flex; align-items: center; gap: 6px; color: var(--mc-text-mute); }
+.mc-chat__bcdot { width: 7px; height: 7px; border-radius: 2px; }
+.mc-chat__bcsep { color: var(--mc-text-dim); }
+.mc-chat__bctype { color: var(--mc-text-mute); }
+
+.mc-chat__head-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.mc-chat__head-right .mc-avatar-stack { margin-right: 8px; }
+
+/* Context strip (task / procurement / site issue) */
+.mc-chat__context {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 22px;
+  border-bottom: 1px solid var(--mc-border-soft);
+  background: oklch(0.25 0.04 var(--h, 220) / .25);
+  --strip-h: var(--h, 220);
+}
+:root[data-theme="light"] .mc-chat__context {
+  background: oklch(0.97 0.03 var(--h, 220) / .9);
+}
+.mc-chat__context-icon {
+  width: 28px; height: 28px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  background: oklch(0.55 0.20 var(--h, 220) / .15);
+  color: oklch(0.80 0.18 var(--h, 220));
+  flex-shrink: 0;
+}
+:root[data-theme="light"] .mc-chat__context-icon {
+  background: oklch(0.55 0.20 var(--h, 220) / .15);
+  color: oklch(0.50 0.20 var(--h, 220));
+}
+.mc-chat__context-body { flex: 1; min-width: 0; }
+.mc-chat__context-title { font-size: 13px; font-weight: 600; color: var(--mc-text); }
+.mc-chat__context-meta { font-size: 11.5px; color: var(--mc-text-dim); margin-top: 1px; }
+.mc-chat__context-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px;
+  font-size: 11.5px; font-weight: 500;
+  color: var(--mc-text-mute);
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 7px;
+}
+.mc-chat__context-link:hover { color: var(--mc-text); background: var(--mc-surface-hi); }
+
+.mc-chat__showinbox {
+  display: none; /* shown only in narrow viewports if needed */
+}
+
+/* Stream */
+.mc-chat__stream {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 0 8px;
+}
+.mc-chat__stream-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex; flex-direction: column;
+}
+
+/* Day separator */
+.mc-day {
+  display: flex; align-items: center; gap: 10px;
+  margin: 18px 0 10px;
+}
+.mc-day::before, .mc-day::after {
+  content: ''; flex: 1; height: 1px; background: var(--mc-border-soft);
+}
+.mc-day span {
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--mc-text-dim);
+}
+
+/* Message row */
+.mc-msg { display: flex; gap: 8px; align-items: flex-end; margin: 1px 0; }
+.mc-msg--first  { margin-top: 10px; }
+.mc-msg--single { margin-top: 10px; margin-bottom: 4px; }
+.mc-msg--last   { margin-bottom: 4px; }
+.mc-msg--compact { margin: 0; }
+.mc-msg--compact.mc-msg--first { margin-top: 6px; }
+.mc-msg--spacious { margin: 3px 0; }
+.mc-msg--spacious.mc-msg--first { margin-top: 16px; }
+
+.mc-msg--own { flex-direction: row-reverse; }
+.mc-msg__avatar { width: 28px; flex-shrink: 0; }
+.mc-msg__col { display: flex; flex-direction: column; max-width: 72%; min-width: 0; }
+.mc-msg--own .mc-msg__col { align-items: flex-end; }
+.mc-msg__name {
+  font-size: 11.5px; font-weight: 600;
+  margin: 0 0 4px 12px;
+  display: flex; align-items: baseline; gap: 6px;
+}
+.mc-msg__role { font-size: 10.5px; font-weight: 400; color: var(--mc-text-dim); }
+.mc-msg__bubble {
+  position: relative;
+  padding: 8px 13px 8px;
+  background: var(--mc-bubble-other);
+  color: var(--mc-bubble-other-fg);
+  border-radius: var(--mc-bubble-radius);
+  font-size: 13.5px; line-height: 1.45;
+  word-wrap: break-word; overflow-wrap: anywhere;
+  display: inline-flex; gap: 8px; align-items: baseline;
+}
+.mc-msg__text { white-space: pre-wrap; }
+.mc-msg__time {
+  font-size: 10px; color: var(--mc-text-dim);
+  margin-left: 4px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Own bubble */
+.mc-msg--own .mc-msg__bubble {
+  background: var(--mc-accent);
+  color: var(--mc-accent-fg);
+  box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+.mc-msg--own .mc-msg__time { color: oklch(from var(--mc-accent-fg) l c h / .65); }
+
+/* Bubble grouping radii */
+:root[data-bubble="rounded"] {
+  --mc-r-tl: 18px; --mc-r-tr: 18px; --mc-r-bl: 18px; --mc-r-br: 18px;
+}
+.mc-msg--other .mc-msg__bubble {
+  border-radius: var(--mc-bubble-radius);
+}
+.mc-msg--other.mc-msg--first  .mc-msg__bubble { border-bottom-left-radius: 6px; }
+.mc-msg--other.mc-msg--middle .mc-msg__bubble { border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
+.mc-msg--other.mc-msg--last   .mc-msg__bubble { border-top-left-radius: 6px; }
+
+.mc-msg--own.mc-msg--first  .mc-msg__bubble { border-bottom-right-radius: 6px; }
+.mc-msg--own.mc-msg--middle .mc-msg__bubble { border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+.mc-msg--own.mc-msg--last   .mc-msg__bubble { border-top-right-radius: 6px; }
+
+:root[data-bubble="soft"] { --mc-bubble-radius: 12px; }
+:root[data-bubble="soft"] .mc-msg__bubble { border-radius: 12px !important; }
+
+:root[data-bubble="tail"] .mc-msg--last.mc-msg--other .mc-msg__bubble::after,
+:root[data-bubble="tail"] .mc-msg--single.mc-msg--other .mc-msg__bubble::after {
+  content: '';
+  position: absolute; bottom: 0; left: -6px;
+  width: 14px; height: 14px;
+  background: var(--mc-bubble-other);
+  clip-path: path('M14 14 Q4 14 0 8 Q6 12 14 4 Z');
+}
+:root[data-bubble="tail"] .mc-msg--last.mc-msg--own .mc-msg__bubble::after,
+:root[data-bubble="tail"] .mc-msg--single.mc-msg--own .mc-msg__bubble::after {
+  content: '';
+  position: absolute; bottom: 0; right: -6px;
+  width: 14px; height: 14px;
+  background: var(--mc-accent);
+  clip-path: path('M0 14 Q10 14 14 8 Q8 12 0 4 Z');
+}
+
+/* Typing */
+.mc-msg__bubble--typing { padding: 10px 14px; }
+.mc-typing { display: inline-flex; gap: 4px; }
+.mc-typing i {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--mc-text-dim);
+  animation: mc-typing 1.2s infinite ease-in-out;
+}
+.mc-typing i:nth-child(2) { animation-delay: 0.15s; }
+.mc-typing i:nth-child(3) { animation-delay: 0.30s; }
+@keyframes mc-typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* ── Composer ─────────────────────────────────────────────────────────── */
+.mc-composer {
+  flex-shrink: 0;
+  padding: 12px 22px 18px;
+  background: var(--mc-bg-chat);
+}
+.mc-composer__bar {
+  display: flex; align-items: flex-end; gap: 6px;
+  padding: 6px 6px 6px 8px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 14px;
+  transition: border-color 120ms, box-shadow 120ms;
+  max-width: 880px;
+  margin: 0 auto;
+}
+.mc-composer__bar:focus-within {
+  border-color: var(--mc-accent);
+  box-shadow: 0 0 0 3px oklch(from var(--mc-accent) l c h / 0.15);
+}
+.mc-composer textarea {
+  flex: 1;
+  background: transparent; border: 0; outline: 0; resize: none;
+  font-size: 14px; line-height: 1.5;
+  padding: 7px 4px;
+  min-height: 22px; max-height: 160px;
+  color: var(--mc-text);
+  font-family: var(--mc-font);
+}
+.mc-composer textarea::placeholder { color: var(--mc-text-dim); }
+.mc-composer__send {
+  width: 30px; height: 30px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 9px;
+  background: var(--mc-accent); color: var(--mc-accent-fg);
+  transition: transform 120ms, filter 120ms;
+}
+.mc-composer__send:hover { filter: brightness(1.08); }
+.mc-composer__send:active { transform: scale(0.96); }
+
+.mc-composer__hints {
+  max-width: 880px; margin: 6px auto 0;
+  display: flex; gap: 14px;
+  font-size: 11px; color: var(--mc-text-dim);
+  padding: 0 8px;
+}
+.mc-composer__hints span { display: inline-flex; align-items: center; gap: 4px; }
+
+/* Scrollbars (subtle) */
+.mc-rail__scroll, .mc-inbox__scroll, .mc-chat__stream { scrollbar-width: thin; scrollbar-color: var(--mc-border) transparent; }
+.mc-rail__scroll::-webkit-scrollbar, .mc-inbox__scroll::-webkit-scrollbar, .mc-chat__stream::-webkit-scrollbar { width: 8px; height: 8px; }
+.mc-rail__scroll::-webkit-scrollbar-thumb, .mc-inbox__scroll::-webkit-scrollbar-thumb, .mc-chat__stream::-webkit-scrollbar-thumb {
+  background: var(--mc-border); border-radius: 99px; border: 2px solid transparent; background-clip: padding-box;
+}
+
+/* Fade-in for new messages */
+.mc-msg { animation: mc-msg-in 200ms ease-out; }
+@keyframes mc-msg-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+</style>
+<style>
+/* Phone-specific layout — reuses tokens from styles.css */
+
+.ph {
+  display: flex; flex-direction: column;
+  height: 100%;
+  background: var(--mc-bg-app);
+  color: var(--mc-text);
+  font-family: var(--mc-font);
+  overflow: hidden;
+}
+
+/* ── Top bar (status-friendly) ─────────────────────────────────── */
+.ph-top {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px 8px;
+  background: var(--mc-bg-rail);
+  border-bottom: 1px solid var(--mc-border-soft);
+}
+.ph-top__back {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--mc-text-mute);
+}
+.ph-top__back:active { background: var(--mc-surface); }
+.ph-top__title {
+  flex: 1;
+  display: flex; flex-direction: column; gap: 1px;
+  min-width: 0;
+}
+.ph-top__title h1 {
+  font-size: 17px; font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ph-top__title .ph-top__sub {
+  font-size: 12px; color: var(--mc-text-mute);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ph-top__actions {
+  display: flex; gap: 4px; align-items: center;
+}
+.ph-top__btn {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--mc-text-mute);
+}
+.ph-top__btn:active { background: var(--mc-surface); }
+
+/* ── Tabbar ─────────────────────────────────────────────── */
+.ph-tabbar {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  padding: 6px 4px 8px;
+  background: var(--mc-bg-rail);
+  border-top: 1px solid var(--mc-border-soft);
+}
+.ph-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 6px 0;
+  font-size: 10px; font-weight: 500;
+  color: var(--mc-text-dim);
+  border-radius: 10px;
+}
+.ph-tab.is-active { color: var(--mc-text); }
+.ph-tab__badge {
+  position: absolute;
+  transform: translate(10px, -8px);
+  background: var(--mc-text); color: var(--mc-bg-rail);
+  font-size: 9px; font-weight: 700;
+  padding: 0 4px; min-width: 14px; height: 14px;
+  border-radius: 7px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
+/* ── Search ────────────────────────────────────────────── */
+.ph-search {
+  margin: 8px 12px 4px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  background: var(--mc-surface);
+  border-radius: 10px;
+  color: var(--mc-text-mute);
+  font-size: 14px;
+}
+.ph-search input {
+  flex: 1; border: 0; outline: none; background: transparent;
+  color: var(--mc-text); font-size: 14px;
+}
+
+/* ── Filter pills ────────────────────────────────── */
+.ph-filter {
+  display: flex; gap: 6px; padding: 6px 12px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ph-filter::-webkit-scrollbar { display: none; }
+.ph-filter__pill {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  font-size: 12px; font-weight: 500;
+  color: var(--mc-text-mute);
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.ph-filter__pill.is-active {
+  color: var(--mc-text);
+  background: var(--mc-surface-hi);
+  border-color: var(--mc-border);
+}
+
+/* ── Scroll area ────────────────────────────── */
+.ph-scroll { flex: 1; overflow-y: auto; }
+
+/* ── Project card list (Projects screen) ─────────── */
+.ph-projlist { padding: 4px 8px 16px; display: flex; flex-direction: column; gap: 4px; }
+.ph-projcard {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px;
+  background: transparent;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  transition: background 100ms;
+}
+.ph-projcard:active, .ph-projcard.is-selected {
+  background: var(--mc-surface);
+  border-color: var(--mc-border-soft);
+}
+.ph-projcard__bubble {
+  position: relative;
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: var(--mc-surface);
+  color: var(--mc-text-mute);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700;
+  flex-shrink: 0;
+}
+.ph-projcard__priority {
+  position: absolute; top: -2px; left: -2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--mc-bg-app);
+}
+.ph-projcard__priority--crit { background: var(--mc-red); }
+.ph-projcard__priority--high { background: var(--mc-amber); }
+.ph-projcard__body {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.ph-projcard__topline {
+  display: flex; align-items: center; gap: 8px;
+}
+.ph-projcard__name {
+  font-size: 15px; font-weight: 600;
+  letter-spacing: -0.01em;
+  flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ph-projcard__time {
+  font-size: 11px; color: var(--mc-text-dim);
+  flex-shrink: 0;
+}
+.ph-projcard__reason {
+  font-size: 12px; color: var(--mc-text-mute);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ph-projcard__chips {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  margin-top: 2px;
+}
+.ph-chip {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 7px;
+  font-size: 11px; font-weight: 600;
+  border-radius: 99px;
+  border: 1px solid transparent;
+  line-height: 1;
+}
+
+/* ── Section header (within project inbox) ─────── */
+.ph-section {
+  padding: 14px 16px 4px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mc-text-dim);
+  display: flex; align-items: center; gap: 8px;
+}
+.ph-section__count {
+  background: var(--mc-surface);
+  color: var(--mc-text-mute);
+  font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: 99px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.ph-section__unread {
+  background: var(--mc-surface-hi);
+  color: var(--mc-text);
+  font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: 99px;
+  letter-spacing: 0;
+  text-transform: none;
+  margin-left: auto;
+}
+
+/* ── Conversation row ─────────────────────────── */
+.ph-conv {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 16px;
+  text-align: left;
+}
+.ph-conv:active { background: var(--mc-surface); }
+.ph-conv__lead {
+  position: relative;
+  width: 40px; height: 40px; flex-shrink: 0;
+}
+.ph-conv__icon {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: oklch(0.30 0.06 var(--h, 220));
+  color: oklch(0.92 0.04 var(--h, 220));
+  display: flex; align-items: center; justify-content: center;
+}
+:root[data-theme="light"] .ph-conv__icon {
+  background: oklch(0.94 0.04 var(--h, 220));
+  color: oklch(0.40 0.10 var(--h, 220));
+}
+.ph-conv__avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; }
+.ph-conv__unreaddot {
+  position: absolute; top: -1px; right: -1px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--mc-text);
+  border: 2px solid var(--mc-bg-app);
+}
+.ph-conv__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ph-conv__top {
+  display: flex; align-items: center; gap: 6px;
+}
+.ph-conv__title {
+  font-size: 14.5px; font-weight: 500;
+  flex: 1; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ph-conv__title.is-unread { font-weight: 700; }
+.ph-conv__time {
+  font-size: 11px; color: var(--mc-text-dim); flex-shrink: 0;
+}
+.ph-conv__sub {
+  display: flex; align-items: center; gap: 6px;
+}
+.ph-conv__preview {
+  flex: 1; min-width: 0;
+  font-size: 13px; color: var(--mc-text-mute);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ph-conv__sender { font-weight: 500; color: var(--mc-text); }
+.ph-conv__badge {
+  background: var(--mc-surface-hi); color: var(--mc-text);
+  padding: 1px 7px; border-radius: 99px;
+  font-size: 10px; font-weight: 600;
+  flex-shrink: 0;
+}
+.ph-conv__meta {
+  font-size: 11px; color: var(--mc-text-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ── Project header card (in project inbox) ───────── */
+.ph-projhead {
+  margin: 10px 12px 6px;
+  padding: 14px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 16px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.ph-projhead__row {
+  display: flex; align-items: center; gap: 12px;
+}
+.ph-projhead__bubble {
+  width: 44px; height: 44px;
+  border-radius: 13px;
+  background: var(--mc-surface-hi);
+  color: var(--mc-text);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700;
+  flex-shrink: 0;
+}
+.ph-projhead__name {
+  font-size: 16px; font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ph-projhead__sub {
+  font-size: 12px; color: var(--mc-text-mute);
+  margin-top: 2px;
+}
+.ph-projhead__stats {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  font-size: 12px; color: var(--mc-text-mute);
+}
+.ph-stat { display: inline-flex; align-items: center; gap: 5px; }
+.ph-statdot { width: 7px; height: 7px; border-radius: 50%; }
+.ph-statdot--blue { background: var(--mc-blue); }
+.ph-statdot--red { background: var(--mc-red); }
+.ph-statdot--amber { background: var(--mc-amber); }
+.ph-statdot--violet { background: var(--mc-violet); }
+
+/* Project nav grid (Open project / Files / Tasks / Procurement) */
+.ph-projnav {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.ph-projnav__btn {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 10px 4px;
+  background: var(--mc-bg-app);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 12px;
+  color: var(--mc-text-mute);
+  font-size: 11px; font-weight: 500;
+  position: relative;
+}
+.ph-projnav__btn:active { background: var(--mc-surface-hi); }
+.ph-projnav__btn.is-primary {
+  color: var(--mc-text);
+  background: var(--mc-surface-hi);
+  border-color: var(--mc-border);
+}
+.ph-projnav__btn-count {
+  position: absolute; top: 6px; right: 6px;
+  background: var(--mc-red); color: white;
+  font-size: 9px; font-weight: 700;
+  padding: 0 5px; min-width: 14px; height: 14px;
+  border-radius: 7px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
+/* ── Chat screen ────────────────────────────── */
+.ph-chat {
+  flex: 1;
+  display: flex; flex-direction: column;
+  position: relative;
+  background: var(--mc-bg-chat);
+  overflow: hidden;
+}
+.ph-chat::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url('assets/chat-bg.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+:root[data-theme="light"] .ph-chat::before {
+  filter: invert(1) hue-rotate(180deg);
+  opacity: 0.10;
+}
+.ph-chat__head, .ph-chat__context, .ph-chat__stream, .ph-composer {
+  position: relative; z-index: 1;
+}
+.ph-chat__head, .ph-composer { background: var(--mc-bg-chat); }
+
+.ph-chat__head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--mc-border-soft);
+}
+.ph-chat__head-back {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--mc-text-mute);
+  border-radius: 8px;
+}
+.ph-chat__head-icon {
+  width: 36px; height: 36px;
+  border-radius: 11px;
+  background: oklch(0.30 0.06 var(--h, 220));
+  color: oklch(0.92 0.04 var(--h, 220));
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+:root[data-theme="light"] .ph-chat__head-icon {
+  background: oklch(0.94 0.04 var(--h, 220));
+  color: oklch(0.40 0.10 var(--h, 220));
+}
+.ph-chat__head-text { flex: 1; min-width: 0; }
+.ph-chat__head-title {
+  font-size: 15px; font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: flex; align-items: center; gap: 6px;
+}
+.ph-chat__head-pill {
+  font-size: 9.5px; font-weight: 700;
+  padding: 1px 6px; border-radius: 99px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.ph-chat__head-pill--crit { background: var(--mc-red); color: white; }
+.ph-chat__head-pill--high { background: oklch(0.40 0.16 70); color: oklch(0.96 0.04 70); }
+:root[data-theme="light"] .ph-chat__head-pill--high { background: oklch(0.95 0.04 70); color: oklch(0.40 0.16 70); }
+
+.ph-chat__head-sub {
+  font-size: 11px; color: var(--mc-text-mute);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: flex; align-items: center; gap: 4px;
+}
+.ph-chat__head-actions { display: flex; gap: 2px; }
+.ph-chat__head-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--mc-text-mute);
+  border-radius: 9px;
+}
+
+/* Context strip — task / procurement / site-issue */
+.ph-chat__context {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px;
+  background: oklch(0.24 0.05 var(--h, 220) / 0.5);
+  border-bottom: 1px solid var(--mc-border-soft);
+  font-size: 12px;
+}
+:root[data-theme="light"] .ph-chat__context {
+  background: oklch(0.96 0.03 var(--h, 220));
+}
+.ph-chat__context-icon {
+  width: 24px; height: 24px;
+  border-radius: 7px;
+  background: oklch(0.40 0.10 var(--h, 220));
+  color: oklch(0.96 0.03 var(--h, 220));
+  display: flex; align-items: center; justify-content: center;
+}
+:root[data-theme="light"] .ph-chat__context-icon {
+  background: oklch(0.50 0.16 var(--h, 220));
+  color: white;
+}
+.ph-chat__context-body { flex: 1; min-width: 0; }
+.ph-chat__context-title { font-weight: 600; color: var(--mc-text); }
+.ph-chat__context-meta { color: var(--mc-text-mute); font-size: 11px; }
+
+/* Stream */
+.ph-chat__stream {
+  flex: 1; overflow-y: auto;
+  padding: 8px 8px 4px;
+  display: flex; flex-direction: column; gap: 1px;
+}
+
+.ph-day {
+  text-align: center; margin: 8px 0 6px;
+  font-size: 11px; color: var(--mc-text-mute);
+}
+.ph-day span {
+  background: var(--mc-surface);
+  padding: 3px 10px; border-radius: 99px;
+}
+
+.ph-msg {
+  display: flex; gap: 6px;
+  padding: 0 4px;
+  margin-bottom: 1px;
+}
+.ph-msg--own { flex-direction: row-reverse; }
+.ph-msg__avatar { width: 24px; flex-shrink: 0; }
+.ph-msg__avatar img, .ph-msg__avatar > div {
+  width: 24px; height: 24px; border-radius: 50%;
+}
+.ph-msg__col { display: flex; flex-direction: column; max-width: 78%; }
+.ph-msg__name {
+  font-size: 11px; font-weight: 600;
+  margin: 4px 10px 2px;
+  display: flex; align-items: center; gap: 6px;
+}
+.ph-msg__role {
+  font-weight: 400; color: var(--mc-text-dim);
+}
+
+.ph-msg__bubble {
+  padding: 6px 10px 4px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.35;
+  background: var(--mc-bubble-other);
+  color: var(--mc-bubble-other-fg);
+  position: relative;
+  word-wrap: break-word;
+}
+.ph-msg--own .ph-msg__bubble {
+  background: var(--mc-accent);
+  color: var(--mc-accent-fg);
+}
+.ph-msg--first .ph-msg__bubble { border-bottom-left-radius: 6px; }
+.ph-msg--middle .ph-msg__bubble { border-radius: 16px 16px 16px 6px; }
+.ph-msg--last .ph-msg__bubble { border-top-left-radius: 6px; }
+.ph-msg--own.ph-msg--first .ph-msg__bubble { border-bottom-left-radius: 16px; border-bottom-right-radius: 6px; }
+.ph-msg--own.ph-msg--middle .ph-msg__bubble { border-radius: 16px 16px 6px 16px; }
+.ph-msg--own.ph-msg--last .ph-msg__bubble { border-top-left-radius: 16px; border-top-right-radius: 6px; border-bottom-right-radius: 16px; }
+.ph-msg__time {
+  font-size: 9.5px; color: var(--mc-text-dim);
+  margin-left: 8px; float: right;
+  margin-top: 2px;
+}
+.ph-msg--own .ph-msg__time { color: oklch(0.92 0.04 var(--mc-accent-h) / 0.75); }
+
+/* Composer */
+.ph-composer {
+  display: flex; align-items: flex-end; gap: 8px;
+  padding: 8px 10px 12px;
+  border-top: 1px solid var(--mc-border-soft);
+}
+.ph-composer__btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--mc-text-mute);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ph-composer__field {
+  flex: 1;
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 12px;
+  background: var(--mc-surface);
+  border-radius: 22px;
+  font-size: 14px;
+  min-height: 36px;
+  color: var(--mc-text-mute);
+}
+.ph-composer__send {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--mc-accent);
+  color: var(--mc-accent-fg);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── New message FAB ───────────────────────── */
+.ph-fab {
+  position: absolute; bottom: 76px; right: 18px;
+  width: 52px; height: 52px;
+  border-radius: 18px;
+  background: var(--mc-accent);
+  color: var(--mc-accent-fg);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--mc-shadow-md);
+  z-index: 5;
+}
+
+</style>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #f0eee9; }
+  .phone-mount { height: 100%; display: flex; }
+  .phone-mount > .ph { flex: 1; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script>
+// Mock data extracted from lib/messages-data.ts and lib/priority-data.ts
+
+const _participants = {
+  sarah:  { name: 'Sarah Chen',     avatar: 'SC', role: 'Project Manager',     hue: 220 },
+  mike:   { name: 'Mike Rodriguez', avatar: 'MR', role: 'Site Superintendent', hue: 25  },
+  david:  { name: 'David Kim',      avatar: 'DK', role: 'Procurement Lead',    hue: 145 },
+  emily:  { name: 'Emily Johnson',  avatar: 'EJ', role: 'Architect',           hue: 290 },
+  james:  { name: 'James Wilson',   avatar: 'JW', role: 'Structural Engineer', hue: 200 },
+  lisa:   { name: 'Lisa Park',      avatar: 'LP', role: 'MEP Coordinator',     hue: 340 },
+  you:    { name: 'You',            avatar: 'ME', role: 'Project Manager',     hue: 230 },
+  carlos: { name: 'Carlos Rivera',  avatar: 'CR', role: 'General Contractor',  hue: 50  },
+  anna:   { name: 'Anna Torres',    avatar: 'AT', role: 'Interior Designer',   hue: 320 },
+  ben:    { name: 'Ben Nakamura',   avatar: 'BN', role: 'Civil Engineer',      hue: 170 },
+};
+
+const _now = Date.now();
+const _m = (minAgo) => new Date(_now - minAgo * 60_000);
+
+const PRIORITY_PROJECTS = [
+  { id: 'pp1',  name: 'Mecca HQ Renovation',     initials: 'MH', priorityLevel: 'critical', manager: 'Sarah Chen',     priorityReason: '4 overdue tasks',           overdueTasks: 4, dueTodayTasks: 2, unreadMessages: 7, hasBlocker: true,  hasWaitingApproval: true,  hasSiteIssue: true,  color: '#ef4444' },
+  { id: 'pp2',  name: 'Downtown Retail Build',   initials: 'DR', priorityLevel: 'critical', manager: 'Mike Rodriguez', priorityReason: 'Site issue open',           overdueTasks: 2, dueTodayTasks: 1, unreadMessages: 3, hasBlocker: true,  hasWaitingApproval: false, hasSiteIssue: true,  color: '#ef4444' },
+  { id: 'pp3',  name: 'North Miami Office',      initials: 'NM', priorityLevel: 'high',     manager: 'Emily Johnson',  priorityReason: '2 quotes pending',          overdueTasks: 1, dueTodayTasks: 2, unreadMessages: 5, hasBlocker: false, hasWaitingApproval: true,  hasSiteIssue: false, color: '#f97316' },
+  { id: 'pp4',  name: 'Wynwood Restaurant',      initials: 'WR', priorityLevel: 'high',     manager: 'David Kim',      priorityReason: 'Approval blocking order',   overdueTasks: 0, dueTodayTasks: 3, unreadMessages: 2, hasBlocker: false, hasWaitingApproval: true,  hasSiteIssue: false, color: '#f59e0b' },
+  { id: 'pp5',  name: 'Brickell Apartment',      initials: 'BA', priorityLevel: 'normal',   manager: 'James Wilson',   priorityReason: '5 open tasks',              overdueTasks: 0, dueTodayTasks: 1, unreadMessages: 0, hasBlocker: false, hasWaitingApproval: false, hasSiteIssue: false, color: '#3b82f6' },
+  { id: 'pp6',  name: 'Coral Gables Villa',      initials: 'CG', priorityLevel: 'high',     manager: 'Lisa Park',      priorityReason: '3 overdue tasks',           overdueTasks: 3, dueTodayTasks: 0, unreadMessages: 4, hasBlocker: false, hasWaitingApproval: false, hasSiteIssue: true,  color: '#8b5cf6' },
+  { id: 'pp7',  name: 'Design Studio Buildout',  initials: 'DS', priorityLevel: 'normal',   manager: 'Emily Johnson',  priorityReason: 'Task due today',            overdueTasks: 0, dueTodayTasks: 2, unreadMessages: 1, hasBlocker: false, hasWaitingApproval: false, hasSiteIssue: false, color: '#06b6d4' },
+  { id: 'pp8',  name: 'Warehouse Conversion',    initials: 'WC', priorityLevel: 'critical', manager: 'Mike Rodriguez', priorityReason: 'Blocker — permit hold',     overdueTasks: 5, dueTodayTasks: 0, unreadMessages: 9, hasBlocker: true,  hasWaitingApproval: true,  hasSiteIssue: true,  color: '#ef4444' },
+  { id: 'pp9',  name: 'Sunset Harbor Residences',initials: 'SH', priorityLevel: 'normal',   manager: 'Carlos Rivera',  priorityReason: 'Foundation phase active',   overdueTasks: 0, dueTodayTasks: 0, unreadMessages: 0, hasBlocker: false, hasWaitingApproval: false, hasSiteIssue: false, color: '#10b981' },
+  { id: 'pp10', name: 'Midtown Medical Clinic',  initials: 'MM', priorityLevel: 'high',     manager: 'Anna Torres',    priorityReason: 'Quote approval needed',     overdueTasks: 0, dueTodayTasks: 1, unreadMessages: 3, hasBlocker: false, hasWaitingApproval: true,  hasSiteIssue: true,  color: '#f97316' },
+  { id: 'pp11', name: 'Overtown Mixed-Use',      initials: 'OM', priorityLevel: 'normal',   manager: 'Emily Johnson',  priorityReason: 'Drawing review in progress',overdueTasks: 0, dueTodayTasks: 0, unreadMessages: 0, hasBlocker: false, hasWaitingApproval: false, hasSiteIssue: false, color: '#3b82f6' },
+  { id: 'pp12', name: 'Bayfront Hotel Renovation',initials:'BH', priorityLevel: 'critical', manager: 'Sarah Chen',     priorityReason: 'Elevator shaft safety',     overdueTasks: 0, dueTodayTasks: 1, unreadMessages: 9, hasBlocker: true,  hasWaitingApproval: true,  hasSiteIssue: true,  color: '#ef4444' },
+  { id: 'pp13', name: 'Edgewater Condos',        initials: 'EC', priorityLevel: 'normal',   manager: 'Carlos Rivera',  priorityReason: 'Drywall on schedule',       overdueTasks: 0, dueTodayTasks: 0, unreadMessages: 0, hasBlocker: false, hasWaitingApproval: false, hasSiteIssue: false, color: '#06b6d4' },
+  { id: 'pp14', name: 'Airport Cargo Terminal',  initials: 'AC', priorityLevel: 'normal',   manager: 'Ben Nakamura',   priorityReason: 'Steel erection phase',      overdueTasks: 0, dueTodayTasks: 0, unreadMessages: 1, hasBlocker: false, hasWaitingApproval: false, hasSiteIssue: false, color: '#64748b' },
+  { id: 'pp15', name: 'Lincoln Road Pop-Up',     initials: 'LR', priorityLevel: 'normal',   manager: 'Anna Torres',    priorityReason: 'Install phase starting',    overdueTasks: 0, dueTodayTasks: 1, unreadMessages: 0, hasBlocker: false, hasWaitingApproval: false, hasSiteIssue: false, color: '#f43f5e' },
+];
+
+function _conv(o) {
+  const base = { unreadCount: 0, priority: 'normal', ...o };
+  if (!base.priorityLevel) {
+    if (base.priority === 'critical') base.priorityLevel = 'p1';
+    else if (base.priority === 'high' && base.unreadCount > 0) base.priorityLevel = 'p1';
+    else if (base.priority === 'high') base.priorityLevel = 'p2';
+    else if (base.priority === 'normal' && base.unreadCount > 0) base.priorityLevel = 'p2';
+    else base.priorityLevel = 'p3';
+  }
+  return base;
+}
+
+const CONVERSATIONS = [
+  // pp1
+  _conv({ id: 'c-pp1-proj',  projectId: 'pp1', type: 'project',     title: 'Project Chat',                       lastMessage: 'Site walk scheduled for 8AM tomorrow.',           lastSender: 'Sarah Chen',     timestamp: _m(12),  unreadCount: 3, priority: 'critical', participants: [_participants.sarah, _participants.mike, _participants.david, _participants.emily] }),
+  _conv({ id: 'c-pp1-t1',    projectId: 'pp1', type: 'task',        title: 'Finish wall framing — Level 3',       lastMessage: 'Still waiting on lumber delivery.',               lastSender: 'Mike Rodriguez', timestamp: _m(45),  unreadCount: 4, priority: 'critical', subtitle: 'Overdue · Mike R.',         status: 'in-progress', participants: [_participants.mike, _participants.sarah] }),
+  _conv({ id: 'c-pp1-t2',    projectId: 'pp1', type: 'task',        title: 'Upload progress photos — Level 2',    lastMessage: 'Photos uploaded to shared folder.',               lastSender: 'Lisa Park',      timestamp: _m(120), unreadCount: 0, priority: 'high',     subtitle: 'Due today · Lisa P.',       status: 'in-progress', participants: [_participants.lisa, _participants.emily] }),
+  _conv({ id: 'c-pp1-proc1', projectId: 'pp1', type: 'procurement', title: 'Lighting fixture quote approval',     lastMessage: 'Quote from 3 vendors. Need sign-off today.',     lastSender: 'David Kim',      timestamp: _m(30),  unreadCount: 2, priority: 'high',     subtitle: 'Waiting approval · David K.', status: 'waiting-approval', participants: [_participants.david, _participants.sarah] }),
+  _conv({ id: 'c-pp1-iss1',  projectId: 'pp1', type: 'site-issue',  title: 'Water leak near storage wall',        lastMessage: 'Plumber on-site. Temporary patch applied.',       lastSender: 'Mike Rodriguez', timestamp: _m(18),  unreadCount: 1, priority: 'critical', subtitle: 'Critical · Mike R.',        status: 'open',          participants: [_participants.mike, _participants.sarah, _participants.james] }),
+
+  // pp2
+  _conv({ id: 'c-pp2-proj',  projectId: 'pp2', type: 'project',     title: 'Project Chat',                       lastMessage: 'Owner visiting Friday at 2PM. Keep site clean.',  lastSender: 'Mike Rodriguez', timestamp: _m(120), unreadCount: 0, priority: 'critical', participants: [_participants.mike, _participants.sarah, _participants.david, _participants.james] }),
+  _conv({ id: 'c-pp2-iss1',  projectId: 'pp2', type: 'site-issue',  title: 'Structural crack — east wall',        lastMessage: 'Engineer assessed. Needs rebar reinforcement.',   lastSender: 'James Wilson',   timestamp: _m(25),  unreadCount: 2, priority: 'critical', subtitle: 'Critical · James W.',       status: 'escalated',     participants: [_participants.james, _participants.mike, _participants.sarah] }),
+  _conv({ id: 'c-pp2-proc1', projectId: 'pp2', type: 'procurement', title: 'Steel beam order — 3 quotes',         lastMessage: 'All 3 quotes received. Waiting comparison.',      lastSender: 'David Kim',      timestamp: _m(180), unreadCount: 1, priority: 'high',     subtitle: 'Pending · David K.',        status: 'pending',        participants: [_participants.david, _participants.mike] }),
+  _conv({ id: 'c-pp2-t1',    projectId: 'pp2', type: 'task',        title: 'Electrical rough-in inspection',      lastMessage: 'Inspector confirmed for 10AM. Lisa on-site.',     lastSender: 'Lisa Park',      timestamp: _m(90),  unreadCount: 0, priority: 'high',     subtitle: 'Due today · Lisa P.',       status: 'in-progress',    participants: [_participants.lisa, _participants.mike] }),
+
+  // pp3
+  _conv({ id: 'c-pp3-proj',  projectId: 'pp3', type: 'project',     title: 'Project Chat',                       lastMessage: 'MEP sign-off meeting moved to Thursday.',        lastSender: 'Emily Johnson',  timestamp: _m(240), unreadCount: 2, priority: 'high',     participants: [_participants.emily, _participants.lisa, _participants.david, _participants.sarah] }),
+  _conv({ id: 'c-pp3-proc1', projectId: 'pp3', type: 'procurement', title: 'HVAC unit — quote approval',          lastMessage: 'Best quote attached. Please approve.',           lastSender: 'David Kim',      timestamp: _m(50),  unreadCount: 3, priority: 'high',     subtitle: 'Waiting approval · David K.', status: 'waiting-approval', participants: [_participants.david, _participants.emily] }),
+  _conv({ id: 'c-pp3-t1',    projectId: 'pp3', type: 'task',        title: 'MEP coordination sign-off',           lastMessage: 'Checklist done. Waiting for Emily final sign-off.',lastSender: 'Lisa Park',     timestamp: _m(300), unreadCount: 0, priority: 'high',     subtitle: 'Due today · Lisa P.',       status: 'in-progress',    participants: [_participants.lisa, _participants.emily] }),
+
+  // pp6
+  _conv({ id: 'c-pp6-proj',  projectId: 'pp6', type: 'project',     title: 'Project Chat',                       lastMessage: 'Pool deck crew ready. Waiting on weather.',      lastSender: 'Lisa Park',      timestamp: _m(55),  unreadCount: 4, priority: 'high',     participants: [_participants.lisa, _participants.mike, _participants.david] }),
+  _conv({ id: 'c-pp6-t1',    projectId: 'pp6', type: 'task',        title: 'Pool deck waterproofing',             lastMessage: 'Rain pushed us back. Rescheduled for Friday.',   lastSender: 'Mike Rodriguez', timestamp: _m(70),  unreadCount: 2, priority: 'high',     subtitle: 'Overdue 3d · Mike R.',      status: 'on-hold',        participants: [_participants.mike, _participants.lisa] }),
+  _conv({ id: 'c-pp6-iss1',  projectId: 'pp6', type: 'site-issue',  title: 'Drainage blockage — rear yard',       lastMessage: 'Plumber cleared partial blockage. Monitoring.', lastSender: 'James Wilson',   timestamp: _m(200), unreadCount: 0, priority: 'high',     subtitle: 'Open · James W.',           status: 'open',           participants: [_participants.james, _participants.lisa] }),
+
+  // pp8
+  _conv({ id: 'c-pp8-proj',  projectId: 'pp8', type: 'project',     title: 'Project Chat',                       lastMessage: 'Permit still on hold. Awaiting zoning response.',lastSender: 'Sarah Chen',     timestamp: _m(20),  unreadCount: 5, priority: 'critical', participants: [_participants.sarah, _participants.mike, _participants.james, _participants.david] }),
+  _conv({ id: 'c-pp8-t1',    projectId: 'pp8', type: 'task',        title: 'Permit resubmission — zoning',        lastMessage: 'Application resubmitted. Response in 3 days.',   lastSender: 'Sarah Chen',     timestamp: _m(360), unreadCount: 2, priority: 'critical', subtitle: 'Overdue 5d · Sarah C.',     status: 'in-progress',    participants: [_participants.sarah, _participants.james] }),
+  _conv({ id: 'c-pp8-iss1',  projectId: 'pp8', type: 'site-issue',  title: 'Roof structural assessment',          lastMessage: 'Engineer arriving Monday. Zones 2-4 halted.',    lastSender: 'James Wilson',   timestamp: _m(35),  unreadCount: 4, priority: 'critical', subtitle: 'Critical · James W.',       status: 'open',           participants: [_participants.james, _participants.mike] }),
+
+  // pp12
+  _conv({ id: 'c-pp12-proj', projectId: 'pp12', type: 'project',    title: 'Project Chat',                       lastMessage: 'Guest floors reopening delayed by 2 weeks.',     lastSender: 'Sarah Chen',     timestamp: _m(15),  unreadCount: 6, priority: 'critical', participants: [_participants.sarah, _participants.anna, _participants.david, _participants.mike] }),
+  _conv({ id: 'c-pp12-iss1', projectId: 'pp12', type: 'site-issue', title: 'Elevator shaft obstruction',          lastMessage: 'Material staged in shaft. Must clear today.',   lastSender: 'Mike Rodriguez', timestamp: _m(10),  unreadCount: 3, priority: 'critical', subtitle: 'Critical — safety',         status: 'open',           participants: [_participants.mike, _participants.sarah] }),
+
+  // direct messages (global)
+  _conv({ id: 'c-dm-sarah',  projectId: '', type: 'direct', title: 'Sarah Chen',     subtitle: 'Project Manager · Pinned',  lastMessage: 'Can you review the updated schedule before EOD?', lastSender: 'Sarah Chen',     timestamp: _m(10),  unreadCount: 1, participants: [_participants.sarah] }),
+  _conv({ id: 'c-dm-david',  projectId: '', type: 'direct', title: 'David Kim',      subtitle: 'Procurement Lead',          lastMessage: 'PO sent. Should be in your inbox.',               lastSender: 'David Kim',      timestamp: _m(180), unreadCount: 0, participants: [_participants.david] }),
+  _conv({ id: 'c-dm-mike',   projectId: '', type: 'direct', title: 'Mike Rodriguez', subtitle: 'Site Superintendent',       lastMessage: 'On my way to the site now.',                      lastSender: 'Mike Rodriguez', timestamp: _m(60),  unreadCount: 0, participants: [_participants.mike] }),
+  _conv({ id: 'c-dm-emily',  projectId: '', type: 'direct', title: 'Emily Johnson',  subtitle: 'Architect · Pinned',        lastMessage: 'RFI #14 response is attached.',                   lastSender: 'Emily Johnson',  timestamp: _m(300), unreadCount: 2, participants: [_participants.emily] }),
+
+  // project-context DMs
+  _conv({ id: 'c-pdm-pp1-sarah', projectId: 'pp1', type: 'direct', title: 'Sarah Chen',     subtitle: 'Direct · Project Manager',           lastMessage: 'Quick question on the Level 3 framing spec.',   lastSender: 'Sarah Chen',     timestamp: _m(35),  unreadCount: 2, participants: [_participants.sarah] }),
+  _conv({ id: 'c-pdm-pp1-mike',  projectId: 'pp1', type: 'direct', title: 'Mike Rodriguez', subtitle: 'Direct · Site Superintendent',        lastMessage: 'Lumber is here. Starting framing at 7AM.',       lastSender: 'Mike Rodriguez', timestamp: _m(90),  unreadCount: 0, participants: [_participants.mike] }),
+];
+
+const MESSAGES = {
+  'c-pp1-proj': [
+    { id: 'm1', content: 'Morning team. Quick sync before we get started today.', sender: _participants.sarah, timestamp: _m(180) },
+    { id: 'm2', content: '@Mike Rodriguez how are we looking on Level 3 framing?', sender: _participants.sarah, timestamp: _m(150) },
+    { id: 'm3', content: 'Lumber delivery is delayed again. Following up with supplier by noon.', sender: _participants.mike, timestamp: _m(120) },
+    { id: 'm4', content: '@David Kim can you escalate to the backup supplier if needed?', sender: _participants.you, timestamp: _m(60), isOwn: true },
+    { id: 'm5', content: 'On it. I have a contact at Timber Pro. Will call now.', sender: _participants.david, timestamp: _m(45) },
+    { id: 'm6', content: 'Site walk scheduled for 8AM tomorrow.', sender: _participants.sarah, timestamp: _m(12) },
+  ],
+  'c-pp1-t1': [
+    { id: 'm1', content: 'Framing on Level 3 is blocked on lumber delivery.', sender: _participants.mike, timestamp: _m(240) },
+    { id: 'm2', content: 'How long have we been waiting?', sender: _participants.you, timestamp: _m(210), isOwn: true },
+    { id: 'm3', content: '3 days. Escalated twice. Supplier keeps pushing back.', sender: _participants.mike, timestamp: _m(180) },
+    { id: 'm4', content: 'Still waiting on lumber delivery before we can proceed.', sender: _participants.mike, timestamp: _m(45) },
+  ],
+  'c-pp1-proc1': [
+    { id: 'm1', content: 'Quotes from Lumina, BrightSpec, and ElectroSupply received.', sender: _participants.david, timestamp: _m(120) },
+    { id: 'm2', content: 'BrightSpec is lowest at $42,800 with 6-week lead time.', sender: _participants.david, timestamp: _m(90) },
+    { id: 'm3', content: 'Does the 6-week lead time work with our schedule?', sender: _participants.you, timestamp: _m(60), isOwn: true },
+    { id: 'm4', content: 'Quote from 3 vendors attached. Need sign-off today.', sender: _participants.david, timestamp: _m(30) },
+  ],
+  'c-pp1-iss1': [
+    { id: 'm1', content: 'Active water intrusion near storage wall on Level 1.', sender: _participants.mike, timestamp: _m(90) },
+    { id: 'm2', content: 'How bad? Any damage to materials?', sender: _participants.you, timestamp: _m(80), isOwn: true },
+    { id: 'm3', content: '@James Wilson I need you to assess the structural risk.', sender: _participants.mike, timestamp: _m(70) },
+    { id: 'm4', content: 'On my way. Keep the area clear.', sender: _participants.james, timestamp: _m(60) },
+    { id: 'm5', content: 'Plumber on-site. Temporary patch applied. Permanent fix tomorrow.', sender: _participants.mike, timestamp: _m(18) },
+  ],
+  'c-pp2-iss1': [
+    { id: 'm1', content: 'Crack is approx 4mm wide, vertical along east wall.', sender: _participants.james, timestamp: _m(180) },
+    { id: 'm2', content: 'All work in that zone stopped.', sender: _participants.mike, timestamp: _m(150) },
+    { id: 'm3', content: 'Has owner been notified yet?', sender: _participants.you, timestamp: _m(120), isOwn: true },
+    { id: 'm4', content: 'Not yet. Waiting for your go-ahead before we escalate.', sender: _participants.james, timestamp: _m(40) },
+    { id: 'm5', content: 'Engineer assessed. Needs rebar reinforcement before work continues.', sender: _participants.james, timestamp: _m(25) },
+  ],
+  'c-pp8-proj': [
+    { id: 'm1', content: 'Still no word from zoning. 3 weeks delayed now.', sender: _participants.sarah, timestamp: _m(300) },
+    { id: 'm2', content: 'Owner is getting impatient. Need status update by Friday.', sender: _participants.mike, timestamp: _m(240) },
+    { id: 'm3', content: "I'll draft a report. James — can you include structural findings?", sender: _participants.you, timestamp: _m(180), isOwn: true },
+    { id: 'm4', content: 'Will do. Report ready by Thursday EOD.', sender: _participants.james, timestamp: _m(150) },
+    { id: 'm5', content: 'Permit still on hold. Awaiting zoning response.', sender: _participants.sarah, timestamp: _m(20) },
+  ],
+  'c-pp12-iss1': [
+    { id: 'm1', content: 'Material has been staged inside the elevator shaft. Safety hazard.', sender: _participants.mike, timestamp: _m(60) },
+    { id: 'm2', content: 'Who authorized that? Clear it immediately.', sender: _participants.you, timestamp: _m(45), isOwn: true },
+    { id: 'm3', content: 'Already on it. Crew clearing now. Should be done in 30 min.', sender: _participants.mike, timestamp: _m(20) },
+    { id: 'm4', content: 'Material staged in shaft. Must clear today.', sender: _participants.mike, timestamp: _m(10) },
+  ],
+  'c-dm-sarah': [
+    { id: 'm1', content: 'Hey, did you get the updated RFI from the architect?', sender: _participants.sarah, timestamp: _m(120) },
+    { id: 'm2', content: 'Yes, reviewing it now.', sender: _participants.you, timestamp: _m(90), isOwn: true },
+    { id: 'm3', content: 'Can you review the updated schedule before EOD?', sender: _participants.sarah, timestamp: _m(10) },
+  ],
+  'c-dm-emily': [
+    { id: 'm1', content: 'I sent over RFI #14 response. Let me know if you need the drawing set.', sender: _participants.emily, timestamp: _m(320) },
+    { id: 'm2', content: "Got it, thanks. What's the turnaround on the revised elevations?", sender: _participants.you, timestamp: _m(310), isOwn: true },
+    { id: 'm3', content: 'RFI #14 response is attached.', sender: _participants.emily, timestamp: _m(300) },
+  ],
+};
+
+function _autoMsgs(convId) {
+  const conv = CONVERSATIONS.find(c => c.id === convId);
+  if (!conv) return [];
+  return [
+    { id: 'a1', content: `Let's discuss "${conv.title}".`, sender: conv.participants[0], timestamp: _m(200) },
+    { id: 'a2', content: 'Sounds good — what do you want to cover first?', sender: _participants.you, timestamp: _m(180), isOwn: true },
+    { id: 'a3', content: conv.lastMessage, sender: conv.participants[0], timestamp: conv.timestamp },
+  ];
+}
+
+function getMessages(convId) {
+  return MESSAGES[convId] || _autoMsgs(convId);
+}
+
+function getProjectConversations(projectId) {
+  return CONVERSATIONS.filter(c => c.projectId === projectId && !(c.type === 'direct'));
+}
+function getProjectDMs(projectId) {
+  return CONVERSATIONS.filter(c => c.projectId === projectId && c.type === 'direct');
+}
+function getGlobalDMs() {
+  return CONVERSATIONS.filter(c => c.type === 'direct' && c.projectId === '');
+}
+function getTotalUnread(projectId) {
+  return CONVERSATIONS.filter(c => c.projectId === projectId).reduce((s, c) => s + c.unreadCount, 0);
+}
+function getUnreadBreakdown(projectId) {
+  const cs = CONVERSATIONS.filter(c => c.projectId === projectId);
+  return {
+    project:     cs.filter(c => c.type === 'project').reduce((s, c) => s + c.unreadCount, 0),
+    task:        cs.filter(c => c.type === 'task').reduce((s, c) => s + c.unreadCount, 0),
+    procurement: cs.filter(c => c.type === 'procurement').reduce((s, c) => s + c.unreadCount, 0),
+    'site-issue':cs.filter(c => c.type === 'site-issue').reduce((s, c) => s + c.unreadCount, 0),
+    direct:      cs.filter(c => c.type === 'direct').reduce((s, c) => s + c.unreadCount, 0),
+  };
+}
+function autoSelectConv(projectId) {
+  const cs = getProjectConversations(projectId);
+  if (!cs.length) return '';
+  const cu = cs.find(c => c.priority === 'critical' && c.unreadCount > 0);
+  if (cu) return cu.id;
+  const u = cs.find(c => c.unreadCount > 0);
+  if (u) return u.id;
+  const cr = cs.find(c => c.priority === 'critical');
+  if (cr) return cr.id;
+  const pc = cs.find(c => c.type === 'project');
+  if (pc) return pc.id;
+  return cs[0].id;
+}
+
+function fmtRelative(d) {
+  const diff = Date.now() - d.getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'now';
+  if (mins < 60) return mins + 'm';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + 'h';
+  return Math.floor(hrs / 24) + 'd';
+}
+function fmtTime(d) {
+  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+function fmtDay(d) {
+  const today = new Date();
+  const isToday = d.toDateString() === today.toDateString();
+  const yest = new Date(today); yest.setDate(today.getDate() - 1);
+  const isYest = d.toDateString() === yest.toDateString();
+  if (isToday) return 'Today';
+  if (isYest) return 'Yesterday';
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+}
+
+window.MeccaData = {
+  PRIORITY_PROJECTS, CONVERSATIONS, MESSAGES, participants: _participants,
+  getMessages, getProjectConversations, getProjectDMs, getGlobalDMs,
+  getTotalUnread, getUnreadBreakdown, autoSelectConv,
+  fmtRelative, fmtTime, fmtDay,
+};
+
+</script>
+
+<script type="text/babel" data-presets="env,react">
+
+// DesignCanvas.jsx — Figma-ish design canvas wrapper
+// Warm gray grid bg + Sections + Artboards + PostIt notes.
+// Artboards are reorderable (grip-drag), deletable, labels/titles are
+// inline-editable, and any artboard can be opened in a fullscreen focus
+// overlay (←/→/Esc). State persists to a .design-canvas.state.json sidecar
+// via the host bridge. No assets, no deps.
+//
+// Usage:
+//   <DesignCanvas>
+//     <DCSection id="onboarding" title="Onboarding" subtitle="First-run variants">
+//       <DCArtboard id="a" label="A · Dusk" width={260} height={480}>…</DCArtboard>
+//       <DCArtboard id="b" label="B · Minimal" width={260} height={480}>…</DCArtboard>
+//     </DCSection>
+//   </DesignCanvas>
+
+const DC = {
+  bg: '#f0eee9',
+  grid: 'rgba(0,0,0,0.06)',
+  label: 'rgba(60,50,40,0.7)',
+  title: 'rgba(40,30,20,0.85)',
+  subtitle: 'rgba(60,50,40,0.6)',
+  postitBg: '#fef4a8',
+  postitText: '#5a4a2a',
+  font: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+};
+
+// One-time CSS injection (classes are dc-prefixed so they don't collide with
+// the hosted design's own styles).
+if (typeof document !== 'undefined' && !document.getElementById('dc-styles')) {
+  const s = document.createElement('style');
+  s.id = 'dc-styles';
+  s.textContent = [
+    '.dc-editable{cursor:text;outline:none;white-space:nowrap;border-radius:3px;padding:0 2px;margin:0 -2px}',
+    '.dc-editable:focus{background:#fff;box-shadow:0 0 0 1.5px #c96442}',
+    '[data-dc-slot]{transition:transform .18s cubic-bezier(.2,.7,.3,1)}',
+    '[data-dc-slot].dc-dragging{transition:none;z-index:10;pointer-events:none}',
+    '[data-dc-slot].dc-dragging .dc-card{box-shadow:0 12px 40px rgba(0,0,0,.25),0 0 0 2px #c96442;transform:scale(1.02)}',
+    // isolation:isolate contains artboard content's z-indexes so a
+    // z-indexed child (sticky navbar etc.) can't paint over .dc-header or
+    // the .dc-menu popover that drops into the top of the card.
+    '.dc-card{isolation:isolate;transition:box-shadow .15s,transform .15s}',
+    '.dc-card *{scrollbar-width:none}',
+    '.dc-card *::-webkit-scrollbar{display:none}',
+    // Per-artboard header: grip + label on the left, delete/expand on the
+    // right. Single flex row; when the artboard's on-screen width is too
+    // narrow for both the label yields (ellipsis, then hidden entirely below
+    // ~4ch via the container query) and the buttons stay on the row.
+    '.dc-header{position:absolute;bottom:100%;left:-4px;margin-bottom:calc(4px * var(--dc-inv-zoom,1));z-index:2;',
+    '  display:flex;align-items:center;container-type:inline-size}',
+    '.dc-labelrow{display:flex;align-items:center;gap:4px;height:24px;flex:1 1 auto;min-width:0}',
+    '.dc-grip{flex:0 0 auto;cursor:grab;display:flex;align-items:center;padding:5px 4px;border-radius:4px;transition:background .12s,opacity .12s}',
+    '.dc-grip:hover{background:rgba(0,0,0,.08)}',
+    '.dc-grip:active{cursor:grabbing}',
+    '.dc-labeltext{flex:1 1 auto;min-width:0;cursor:pointer;border-radius:4px;padding:3px 6px;',
+    '  display:flex;align-items:center;transition:background .12s;overflow:hidden}',
+    // Below ~4ch of label room: hide the label entirely, and drop the grip to
+    // hover-only (same reveal rule as .dc-btns) so a narrow header is clean
+    // until the card is moused.
+    '@container (max-width: 110px){',
+    '  .dc-labeltext{display:none}',
+    '  .dc-grip{opacity:0}',
+    '  [data-dc-slot]:hover .dc-grip{opacity:1}',
+    '}',
+    '.dc-labeltext:hover{background:rgba(0,0,0,.05)}',
+    '.dc-labeltext .dc-editable{overflow:hidden;text-overflow:ellipsis;max-width:100%}',
+    '.dc-labeltext .dc-editable:focus{overflow:visible;text-overflow:clip}',
+    '.dc-btns{flex:0 0 auto;margin-left:auto;display:flex;gap:2px;opacity:0;transition:opacity .12s}',
+    '[data-dc-slot]:hover .dc-btns,.dc-btns:has(.dc-menu){opacity:1}',
+    '.dc-expand,.dc-kebab{width:22px;height:22px;border-radius:5px;border:none;cursor:pointer;padding:0;',
+    '  background:transparent;color:rgba(60,50,40,.7);display:flex;align-items:center;justify-content:center;',
+    '  font:inherit;transition:background .12s,color .12s}',
+    '.dc-expand:hover,.dc-kebab:hover{background:rgba(0,0,0,.06);color:#2a251f}',
+    // Slot hosting an open menu floats above later siblings (which otherwise
+    // paint on top — same z-index:auto, later DOM order) so the popup isn't
+    // clipped by the next card.
+    '[data-dc-slot]:has(.dc-menu){z-index:10}',
+    '.dc-menu{position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;',
+    '  box-shadow:0 8px 28px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.05);padding:4px;min-width:160px;z-index:10}',
+    '.dc-menu button{display:block;width:100%;padding:7px 10px;border:0;background:transparent;',
+    '  border-radius:5px;font-family:inherit;font-size:13px;font-weight:500;line-height:1.2;',
+    '  color:#29261b;cursor:pointer;text-align:left;transition:background .12s;white-space:nowrap}',
+    '.dc-menu button:hover{background:rgba(0,0,0,.05)}',
+    '.dc-menu hr{border:0;border-top:1px solid rgba(0,0,0,.08);margin:4px 2px}',
+    '.dc-menu .dc-danger{color:#c96442}',
+    '.dc-menu .dc-danger:hover{background:rgba(201,100,66,.1)}',
+    // Chrome (titles / labels / buttons) counter-scales against the viewport
+    // zoom so it stays a constant on-screen size. --dc-inv-zoom is set by
+    // DCViewport on every transform update and inherits to all descendants —
+    // any overlay inside the world (e.g. a TweaksPanel on an artboard) can use
+    // it the same way.
+    //
+    // The header uses transform:scale (out-of-flow, so layout impact doesn't
+    // matter) with its world-space width set to card-width / inv-zoom so that
+    // after counter-scaling its on-screen width exactly matches the card's —
+    // that's what lets the container query + text-overflow behave against the
+    // card's visible edge at every zoom level.
+    //
+    // The section head uses CSS zoom instead of transform so its layout box
+    // grows with the counter-scale, pushing the card row down — otherwise the
+    // constant-screen-size title would overflow into the (shrinking) world-
+    // space gap and overlap the artboard headers at low zoom.
+    '.dc-header{width:calc((100% + 4px) / var(--dc-inv-zoom,1));',
+    '  transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom left}',
+    '.dc-sectionhead{zoom:var(--dc-inv-zoom,1)}',
+  ].join('\n');
+  document.head.appendChild(s);
+}
+
+const DCCtx = React.createContext(null);
+
+// ─────────────────────────────────────────────────────────────
+// DesignCanvas — stateful wrapper around the pan/zoom viewport.
+// Owns runtime state (per-section order, renamed titles/labels, hidden
+// artboards, focused artboard). Order/titles/labels/hidden persist to a
+// .design-canvas.state.json
+// sidecar next to the HTML. Reads go via plain fetch() so the saved
+// arrangement is visible anywhere the HTML + sidecar are served together
+// (omelette preview, direct link, downloaded zip). Writes go through the
+// host's window.omelette bridge — editing requires the omelette runtime.
+// Focus is ephemeral.
+// ─────────────────────────────────────────────────────────────
+const DC_STATE_FILE = '.design-canvas.state.json';
+
+function DesignCanvas({ children, minScale, maxScale, style }) {
+  const [state, setState] = React.useState({ sections: {}, focus: null });
+  // Hold rendering until the sidecar read settles so the saved order/titles
+  // appear on first paint (no source-order flash). didRead gates writes until
+  // the read settles so the empty initial state can't clobber a slow read;
+  // skipNextWrite suppresses the one echo-write that would otherwise follow
+  // hydration.
+  const [ready, setReady] = React.useState(false);
+  const didRead = React.useRef(false);
+  const skipNextWrite = React.useRef(false);
+
+  React.useEffect(() => {
+    let off = false;
+    fetch('./' + DC_STATE_FILE)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((saved) => {
+        if (off || !saved || !saved.sections) return;
+        skipNextWrite.current = true;
+        setState((s) => ({ ...s, sections: saved.sections }));
+      })
+      .catch(() => {})
+      .finally(() => { didRead.current = true; if (!off) setReady(true); });
+    const t = setTimeout(() => { if (!off) setReady(true); }, 150);
+    return () => { off = true; clearTimeout(t); };
+  }, []);
+
+  React.useEffect(() => {
+    if (!didRead.current) return;
+    if (skipNextWrite.current) { skipNextWrite.current = false; return; }
+    const t = setTimeout(() => {
+      window.omelette?.writeFile(DC_STATE_FILE, JSON.stringify({ sections: state.sections })).catch(() => {});
+    }, 250);
+    return () => clearTimeout(t);
+  }, [state.sections]);
+
+  // Build registries synchronously from children so FocusOverlay can read
+  // them in the same render. Only direct DCSection > DCArtboard children are
+  // walked — wrapping them in other elements opts out of focus/reorder.
+  const registry = {};     // slotId -> { sectionId, artboard }
+  const sectionMeta = {};  // sectionId -> { title, subtitle, slotIds[] }
+  const sectionOrder = [];
+  React.Children.forEach(children, (sec) => {
+    if (!sec || sec.type !== DCSection) return;
+    const sid = sec.props.id ?? sec.props.title;
+    if (!sid) return;
+    sectionOrder.push(sid);
+    const persisted = state.sections[sid] || {};
+    const abs = [];
+    React.Children.forEach(sec.props.children, (ab) => {
+      if (!ab || ab.type !== DCArtboard) return;
+      const aid = ab.props.id ?? ab.props.label;
+      if (aid) abs.push([aid, ab]);
+    });
+    // hidden is scoped to one source revision — when the agent regenerates
+    // (artboard-ID set changes), prior deletes don't apply to new content.
+    const srcKey = abs.map(([k]) => k).join('\x1f');
+    const hidden = persisted.srcKey === srcKey ? (persisted.hidden || []) : [];
+    const srcIds = [];
+    abs.forEach(([aid, ab]) => {
+      if (hidden.includes(aid)) return;
+      registry[`${sid}/${aid}`] = { sectionId: sid, artboard: ab };
+      srcIds.push(aid);
+    });
+    const kept = (persisted.order || []).filter((k) => srcIds.includes(k));
+    sectionMeta[sid] = {
+      title: persisted.title ?? sec.props.title,
+      subtitle: sec.props.subtitle,
+      slotIds: [...kept, ...srcIds.filter((k) => !kept.includes(k))],
+    };
+  });
+
+  const api = React.useMemo(() => ({
+    state,
+    section: (id) => state.sections[id] || {},
+    patchSection: (id, p) => setState((s) => ({
+      ...s,
+      sections: { ...s.sections, [id]: { ...s.sections[id], ...(typeof p === 'function' ? p(s.sections[id] || {}) : p) } },
+    })),
+    setFocus: (slotId) => setState((s) => ({ ...s, focus: slotId })),
+  }), [state]);
+
+  // Esc exits focus; any outside pointerdown commits an in-progress rename.
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') api.setFocus(null); };
+    const onPd = (e) => {
+      const ae = document.activeElement;
+      if (ae && ae.isContentEditable && !ae.contains(e.target)) ae.blur();
+    };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onPd, true);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onPd, true);
+    };
+  }, [api]);
+
+  return (
+    <DCCtx.Provider value={api}>
+      <DCViewport minScale={minScale} maxScale={maxScale} style={style}>{ready && children}</DCViewport>
+      {state.focus && registry[state.focus] && (
+        <DCFocusOverlay entry={registry[state.focus]} sectionMeta={sectionMeta} sectionOrder={sectionOrder} />
+      )}
+    </DCCtx.Provider>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// DCViewport — transform-based pan/zoom (internal)
+//
+// Input mapping (Figma-style):
+//   • trackpad pinch  → zoom   (ctrlKey wheel; Safari gesture* events)
+//   • trackpad scroll → pan    (two-finger)
+//   • mouse wheel     → zoom   (notched; distinguished from trackpad scroll)
+//   • middle-drag / primary-drag-on-bg → pan
+//
+// Transform state lives in a ref and is written straight to the DOM
+// (translate3d + will-change) so wheel ticks don't go through React —
+// keeps pans at 60fps on dense canvases.
+// ─────────────────────────────────────────────────────────────
+function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
+  const vpRef = React.useRef(null);
+  const worldRef = React.useRef(null);
+  const tf = React.useRef({ x: 0, y: 0, scale: 1 });
+  // Persist viewport across reloads so the user lands back where they were
+  // after an agent edit or browser refresh. The sandbox origin is already
+  // per-project; pathname keeps multiple canvas files in one project apart.
+  const tfKey = 'dc-viewport:' + location.pathname;
+  const saveT = React.useRef(0);
+
+  const lastPostedScale = React.useRef();
+  const apply = React.useCallback(() => {
+    const { x, y, scale } = tf.current;
+    const el = worldRef.current;
+    if (!el) return;
+    el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+    // Exposed for zoom-invariant chrome (labels, buttons, TweaksPanel).
+    el.style.setProperty('--dc-inv-zoom', String(1 / scale));
+    // Keep the host toolbar's % readout in sync with the canvas scale. Pan
+    // ticks leave scale unchanged — skip the cross-frame post for those.
+    if (lastPostedScale.current !== scale) {
+      lastPostedScale.current = scale;
+      window.parent.postMessage({ type: '__dc_zoom', scale }, '*');
+    }
+    clearTimeout(saveT.current);
+    saveT.current = setTimeout(() => {
+      try { localStorage.setItem(tfKey, JSON.stringify(tf.current)); } catch {}
+    }, 200);
+  }, [tfKey]);
+
+  React.useLayoutEffect(() => {
+    const flush = () => {
+      clearTimeout(saveT.current);
+      try { localStorage.setItem(tfKey, JSON.stringify(tf.current)); } catch {}
+    };
+    try {
+      const s = JSON.parse(localStorage.getItem(tfKey) || 'null');
+      if (s && Number.isFinite(s.x) && Number.isFinite(s.y) && Number.isFinite(s.scale)) {
+        tf.current = { x: s.x, y: s.y, scale: Math.min(maxScale, Math.max(minScale, s.scale)) };
+        apply();
+      }
+    } catch {}
+    // Flush on pagehide and unmount so a reload within the 200ms debounce
+    // window doesn't drop the last pan/zoom.
+    window.addEventListener('pagehide', flush);
+    return () => { window.removeEventListener('pagehide', flush); flush(); };
+  }, []);
+
+  React.useEffect(() => {
+    const vp = vpRef.current;
+    if (!vp) return;
+
+    const zoomAt = (cx, cy, factor) => {
+      const r = vp.getBoundingClientRect();
+      const px = cx - r.left, py = cy - r.top;
+      const t = tf.current;
+      const next = Math.min(maxScale, Math.max(minScale, t.scale * factor));
+      const k = next / t.scale;
+      // keep the world point under the cursor fixed
+      t.x = px - (px - t.x) * k;
+      t.y = py - (py - t.y) * k;
+      t.scale = next;
+      apply();
+    };
+
+    // Mouse-wheel vs trackpad-scroll heuristic. A physical wheel sends
+    // line-mode deltas (Firefox) or large integer pixel deltas with no X
+    // component (Chrome/Safari, typically multiples of 100/120). Trackpad
+    // two-finger scroll sends small/fractional pixel deltas, often with
+    // non-zero deltaX. ctrlKey is set by the browser for trackpad pinch.
+    const isMouseWheel = (e) =>
+      e.deltaMode !== 0 ||
+      (e.deltaX === 0 && Number.isInteger(e.deltaY) && Math.abs(e.deltaY) >= 40);
+
+    const onWheel = (e) => {
+      e.preventDefault();
+      if (isGesturing) return; // Safari: gesture* owns the pinch — discard concurrent wheels
+      if ((e.ctrlKey || e.metaKey) && !isMouseWheel(e)) {
+        // trackpad pinch, or ctrl/cmd + smooth-scroll mouse. Notched
+        // wheels fall through to the fixed-step branch below.
+        zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.01));
+      } else if (isMouseWheel(e)) {
+        // notched mouse wheel — fixed-ratio step per click
+        zoomAt(e.clientX, e.clientY, Math.exp(-Math.sign(e.deltaY) * 0.18));
+      } else {
+        // trackpad two-finger scroll — pan
+        tf.current.x -= e.deltaX;
+        tf.current.y -= e.deltaY;
+        apply();
+      }
+    };
+
+    // Safari sends native gesture* events for trackpad pinch with a smooth
+    // e.scale; preferring these over the ctrl+wheel fallback gives a much
+    // better feel there. No-ops on other browsers. Safari also fires
+    // ctrlKey wheel events during the same pinch — isGesturing makes
+    // onWheel drop those entirely so they neither zoom nor pan.
+    let gsBase = 1;
+    let isGesturing = false;
+    const onGestureStart = (e) => { e.preventDefault(); isGesturing = true; gsBase = tf.current.scale; };
+    const onGestureChange = (e) => {
+      e.preventDefault();
+      zoomAt(e.clientX, e.clientY, (gsBase * e.scale) / tf.current.scale);
+    };
+    const onGestureEnd = (e) => { e.preventDefault(); isGesturing = false; };
+
+    // Drag-pan: middle button anywhere, or primary button on canvas
+    // background (anything that isn't an artboard or an inline editor).
+    let drag = null;
+    const onPointerDown = (e) => {
+      const onBg = !e.target.closest('[data-dc-slot], .dc-editable');
+      if (!(e.button === 1 || (e.button === 0 && onBg))) return;
+      e.preventDefault();
+      vp.setPointerCapture(e.pointerId);
+      drag = { id: e.pointerId, lx: e.clientX, ly: e.clientY };
+      vp.style.cursor = 'grabbing';
+    };
+    const onPointerMove = (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      tf.current.x += e.clientX - drag.lx;
+      tf.current.y += e.clientY - drag.ly;
+      drag.lx = e.clientX; drag.ly = e.clientY;
+      apply();
+    };
+    const onPointerUp = (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      vp.releasePointerCapture(e.pointerId);
+      drag = null;
+      vp.style.cursor = '';
+    };
+
+    // Host-driven zoom (toolbar % menu). Zooms around viewport centre so the
+    // visible midpoint stays fixed — matching the host's iframe-zoom feel.
+    const onHostMsg = (e) => {
+      const d = e.data;
+      if (d && d.type === '__dc_set_zoom' && typeof d.scale === 'number') {
+        const r = vp.getBoundingClientRect();
+        zoomAt(r.left + r.width / 2, r.top + r.height / 2, d.scale / tf.current.scale);
+      } else if (d && d.type === '__dc_probe') {
+        // Host's [readyGen] reset asks whether a canvas is present; it
+        // fires on the iframe's native 'load', which for canvases with
+        // images/fonts is after our mount-time announce, so re-announce.
+        // Clear the pan-tick guard so apply() re-posts the current scale
+        // even if it's unchanged — the host just reset dcScale to 1.
+        window.parent.postMessage({ type: '__dc_present' }, '*');
+        lastPostedScale.current = undefined;
+        apply();
+      }
+    };
+    window.addEventListener('message', onHostMsg);
+    // Announce canvas mode so the host toolbar proxies its % control here
+    // instead of scaling the iframe element (which would just shrink the
+    // viewport window of an infinite canvas). The apply() that follows emits
+    // the initial __dc_zoom so the toolbar % is correct before first pinch.
+    // lastPostedScale reset mirrors the __dc_probe handler: the layout
+    // effect's restore-path apply() may already have posted the restored
+    // scale (before __dc_present), so clear the guard to re-post it in order.
+    window.parent.postMessage({ type: '__dc_present' }, '*');
+    lastPostedScale.current = undefined;
+    apply();
+
+    vp.addEventListener('wheel', onWheel, { passive: false });
+    vp.addEventListener('gesturestart', onGestureStart, { passive: false });
+    vp.addEventListener('gesturechange', onGestureChange, { passive: false });
+    vp.addEventListener('gestureend', onGestureEnd, { passive: false });
+    vp.addEventListener('pointerdown', onPointerDown);
+    vp.addEventListener('pointermove', onPointerMove);
+    vp.addEventListener('pointerup', onPointerUp);
+    vp.addEventListener('pointercancel', onPointerUp);
+    return () => {
+      window.removeEventListener('message', onHostMsg);
+      vp.removeEventListener('wheel', onWheel);
+      vp.removeEventListener('gesturestart', onGestureStart);
+      vp.removeEventListener('gesturechange', onGestureChange);
+      vp.removeEventListener('gestureend', onGestureEnd);
+      vp.removeEventListener('pointerdown', onPointerDown);
+      vp.removeEventListener('pointermove', onPointerMove);
+      vp.removeEventListener('pointerup', onPointerUp);
+      vp.removeEventListener('pointercancel', onPointerUp);
+    };
+  }, [apply, minScale, maxScale]);
+
+  const gridSvg = `url("data:image/svg+xml,%3Csvg width='120' height='120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M120 0H0v120' fill='none' stroke='${encodeURIComponent(DC.grid)}' stroke-width='1'/%3E%3C/svg%3E")`;
+  return (
+    <div
+      ref={vpRef}
+      className="design-canvas"
+      style={{
+        height: '100vh', width: '100vw',
+        background: DC.bg,
+        overflow: 'hidden',
+        overscrollBehavior: 'none',
+        touchAction: 'none',
+        position: 'relative',
+        fontFamily: DC.font,
+        boxSizing: 'border-box',
+        ...style,
+      }}
+    >
+      <div
+        ref={worldRef}
+        style={{
+          position: 'absolute', top: 0, left: 0,
+          transformOrigin: '0 0',
+          willChange: 'transform',
+          width: 'max-content', minWidth: '100%',
+          minHeight: '100%',
+          padding: '60px 0 80px',
+        }}
+      >
+        <div style={{ position: 'absolute', inset: -6000, backgroundImage: gridSvg, backgroundSize: '120px 120px', pointerEvents: 'none', zIndex: -1 }} />
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// DCSection — editable title + h-row of artboards in persisted order
+// ─────────────────────────────────────────────────────────────
+function DCSection({ id, title, subtitle, children, gap = 48 }) {
+  const ctx = React.useContext(DCCtx);
+  const sid = id ?? title;
+  const all = React.Children.toArray(children);
+  const artboards = all.filter((c) => c && c.type === DCArtboard);
+  const rest = all.filter((c) => !(c && c.type === DCArtboard));
+  const sec = (ctx && sid && ctx.section(sid)) || {};
+  // Must match DesignCanvas's srcKey computation exactly (it filters falsy
+  // IDs), or onDelete persists a srcKey that DesignCanvas never recognizes.
+  const allIds = artboards.map((a) => a.props.id ?? a.props.label).filter(Boolean);
+  const srcKey = allIds.join('\x1f');
+  const hidden = sec.srcKey === srcKey ? (sec.hidden || []) : [];
+  const srcOrder = allIds.filter((k) => !hidden.includes(k));
+
+  const order = React.useMemo(() => {
+    const kept = (sec.order || []).filter((k) => srcOrder.includes(k));
+    return [...kept, ...srcOrder.filter((k) => !kept.includes(k))];
+  }, [sec.order, srcOrder.join('|')]);
+
+  const byId = Object.fromEntries(artboards.map((a) => [a.props.id ?? a.props.label, a]));
+
+  // marginBottom counter-scales so the on-screen gap between sections stays
+  // constant — otherwise at low zoom the (world-space) gap collapses while
+  // the screen-constant sectionhead below it doesn't, and the title reads as
+  // belonging to the section above. paddingBottom below is just enough for
+  // the 24px artboard-header (abs-positioned above each card) plus ~8px, so
+  // the title sits tight against its own row at every zoom.
+  return (
+    <div data-dc-section={sid}
+      style={{ marginBottom: 'calc(80px * var(--dc-inv-zoom, 1))', position: 'relative' }}>
+      <div style={{ padding: '0 60px' }}>
+        <div className="dc-sectionhead" style={{ paddingBottom: 36 }}>
+          <DCEditable tag="div" value={sec.title ?? title}
+            onChange={(v) => ctx && sid && ctx.patchSection(sid, { title: v })}
+            style={{ fontSize: 28, fontWeight: 600, color: DC.title, letterSpacing: -0.4, marginBottom: 6, display: 'inline-block' }} />
+          {subtitle && <div style={{ fontSize: 16, color: DC.subtitle }}>{subtitle}</div>}
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap, padding: '0 60px', alignItems: 'flex-start', width: 'max-content' }}>
+        {order.map((k) => (
+          <DCArtboardFrame key={k} sectionId={sid} artboard={byId[k]} order={order}
+            label={(sec.labels || {})[k] ?? byId[k].props.label}
+            onRename={(v) => ctx && ctx.patchSection(sid, (x) => ({ labels: { ...x.labels, [k]: v } }))}
+            onReorder={(next) => ctx && ctx.patchSection(sid, { order: next })}
+            onDelete={() => ctx && ctx.patchSection(sid, (x) => ({
+              hidden: [...(x.srcKey === srcKey ? (x.hidden || []) : []), k],
+              srcKey,
+            }))}
+            onFocus={() => ctx && ctx.setFocus(`${sid}/${k}`)} />
+        ))}
+      </div>
+      {rest}
+    </div>
+  );
+}
+
+// DCArtboard — marker; rendered by DCArtboardFrame via DCSection.
+function DCArtboard() { return null; }
+
+// Per-artboard export (kind: 'png' | 'html'). Both paths share the same
+// self-contained clone: computed styles baked in, @font-face / <img> /
+// inline-style background-image urls inlined as data URIs. PNG wraps the
+// clone in foreignObject→canvas at 3× the artboard's natural width×height
+// (same pipeline the host uses for page captures); HTML wraps it in a
+// minimal standalone document. Both are independent of viewport zoom.
+async function dcExport(node, w, h, name, kind) {
+  try { await document.fonts.ready; } catch {}
+  const toDataURL = (url) => fetch(url).then((r) => r.blob()).then((b) => new Promise((res) => {
+    const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = () => res(url); fr.readAsDataURL(b);
+  })).catch(() => url);
+
+  // Collect @font-face rules. ss.cssRules throws SecurityError on
+  // cross-origin sheets (e.g. fonts.googleapis.com) — in that case fetch
+  // the CSS text directly (those endpoints send ACAO:*) and regex-extract
+  // the blocks. @import and @media/@supports are walked so nested
+  // @font-face rules aren't missed.
+  const fontRules = [], pending = [], seen = new Set();
+  const scrapeCss = (href) => {
+    if (seen.has(href)) return; seen.add(href);
+    pending.push(fetch(href).then((r) => r.text()).then((css) => {
+      for (const m of css.match(/@font-face\s*{[^}]*}/g) || []) fontRules.push({ css: m, base: href });
+      for (const m of css.matchAll(/@import\s+(?:url\()?['"]?([^'")\s;]+)/g))
+        scrapeCss(new URL(m[1], href).href);
+    }).catch(() => {}));
+  };
+  const walk = (rules, base) => {
+    for (const r of rules) {
+      if (r.type === CSSRule.FONT_FACE_RULE) fontRules.push({ css: r.cssText, base });
+      else if (r.type === CSSRule.IMPORT_RULE && r.styleSheet) {
+        const ibase = r.styleSheet.href || base;
+        try { walk(r.styleSheet.cssRules, ibase); } catch { scrapeCss(ibase); }
+      } else if (r.cssRules) walk(r.cssRules, base);
+    }
+  };
+  for (const ss of document.styleSheets) {
+    const base = ss.href || location.href;
+    try { walk(ss.cssRules, base); } catch { if (ss.href) scrapeCss(ss.href); }
+  }
+  while (pending.length) await pending.shift();
+  const fontCss = (await Promise.all(fontRules.map(async (rule) => {
+    let out = rule.css, m; const re = /url\((['"]?)([^'")]+)\1\)/g;
+    while ((m = re.exec(rule.css))) {
+      if (m[2].indexOf('data:') === 0) continue;
+      let abs; try { abs = new URL(m[2], rule.base).href; } catch { continue; }
+      out = out.split(m[0]).join('url("' + await toDataURL(abs) + '")');
+    }
+    return out;
+  }))).join('\n');
+
+  const cloneStyled = (src) => {
+    if (src.nodeType === 8 || (src.nodeType === 1 && src.tagName === 'SCRIPT')) return document.createTextNode('');
+    const dst = src.cloneNode(false);
+    if (src.nodeType === 1) {
+      const cs = getComputedStyle(src); let txt = '';
+      for (let i = 0; i < cs.length; i++) txt += cs[i] + ':' + cs.getPropertyValue(cs[i]) + ';';
+      dst.setAttribute('style', txt + 'animation:none;transition:none;');
+      if (src.tagName === 'CANVAS') try { const im = document.createElement('img'); im.src = src.toDataURL(); im.setAttribute('style', txt); return im; } catch {}
+    }
+    for (let c = src.firstChild; c; c = c.nextSibling) dst.appendChild(cloneStyled(c));
+    return dst;
+  };
+  const clone = cloneStyled(node);
+  clone.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+  // Drop the card's own shadow/radius so the export is a flush w×h rect;
+  // the artboard's own background (if any) is already in the computed style.
+  clone.style.boxShadow = 'none'; clone.style.borderRadius = '0';
+
+  const jobs = [];
+  clone.querySelectorAll('img').forEach((el) => {
+    const s = el.getAttribute('src');
+    if (s && s.indexOf('data:') !== 0) jobs.push(toDataURL(el.src).then((d) => el.setAttribute('src', d)));
+  });
+  [clone, ...clone.querySelectorAll('*')].forEach((el) => {
+    const bg = el.style.backgroundImage; if (!bg) return;
+    let m; const re = /url\(["']?([^"')]+)["']?\)/g;
+    while ((m = re.exec(bg))) {
+      const tok = m[0], url = m[1];
+      if (url.indexOf('data:') === 0) continue;
+      jobs.push(toDataURL(url).then((d) => { el.style.backgroundImage = el.style.backgroundImage.split(tok).join('url("' + d + '")'); }));
+    }
+  });
+  await Promise.all(jobs);
+
+  const xml = new XMLSerializer().serializeToString(clone);
+  const save = (blob, ext) => {
+    if (!blob) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name + '.' + ext; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+
+  if (kind === 'html') {
+    const html = '<!doctype html><html><head><meta charset="utf-8"><title>' + name + '</title>' +
+      (fontCss ? '<style>' + fontCss + '</style>' : '') +
+      '</head><body style="margin:0">' + xml + '</body></html>';
+    return save(new Blob([html], { type: 'text/html' }), 'html');
+  }
+
+  // PNG: the SVG's own width/height must be the output resolution — an
+  // <img>-loaded SVG rasterizes at its intrinsic size, so sizing it at 1×
+  // and ctx.scale()-ing up would just upscale a 1× bitmap. viewBox maps the
+  // w×h foreignObject onto the px·w × px·h SVG canvas so the browser renders
+  // the HTML at full resolution.
+  const px = 3;
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w * px + '" height="' + h * px +
+    '" viewBox="0 0 ' + w + ' ' + h + '"><foreignObject width="' + w + '" height="' + h + '">' +
+    (fontCss ? '<style><![CDATA[' + fontCss + ']]></style>' : '') + xml + '</foreignObject></svg>';
+  const img = new Image();
+  await new Promise((res, rej) => {
+    img.onload = res; img.onerror = () => rej(new Error('svg load failed'));
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  });
+  const cv = document.createElement('canvas');
+  cv.width = w * px; cv.height = h * px;
+  cv.getContext('2d').drawImage(img, 0, 0);
+  cv.toBlob((blob) => save(blob, 'png'), 'image/png');
+}
+
+function DCArtboardFrame({ sectionId, artboard, label, order, onRename, onReorder, onFocus, onDelete }) {
+  const { id: rawId, label: rawLabel, width = 260, height = 480, children, style = {} } = artboard.props;
+  const id = rawId ?? rawLabel;
+  const ref = React.useRef(null);
+  const cardRef = React.useRef(null);
+  const menuRef = React.useRef(null);
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [confirming, setConfirming] = React.useState(false);
+
+  // ⋯ menu: close on any outside pointerdown. Two-click delete lives inside
+  // the menu — first click arms the row, second commits; closing disarms.
+  React.useEffect(() => {
+    if (!menuOpen) { setConfirming(false); return; }
+    const off = (e) => { if (!menuRef.current || !menuRef.current.contains(e.target)) setMenuOpen(false); };
+    document.addEventListener('pointerdown', off, true);
+    return () => document.removeEventListener('pointerdown', off, true);
+  }, [menuOpen]);
+
+  const doExport = (kind) => {
+    setMenuOpen(false);
+    if (!cardRef.current) return;
+    const name = String(label || id || 'artboard').replace(/[^\w\s.-]+/g, '_');
+    dcExport(cardRef.current, width, height, name, kind)
+      .catch((e) => console.error('[design-canvas] export failed:', e));
+  };
+
+  // Live drag-reorder: dragged card sticks to cursor; siblings slide into
+  // their would-be slots in real time via transforms. DOM order only
+  // changes on drop.
+  const onGripDown = (e) => {
+    e.preventDefault(); e.stopPropagation();
+    const me = ref.current;
+    // translateX is applied in local (pre-scale) space but pointer deltas and
+    // getBoundingClientRect().left are screen-space — divide by the viewport's
+    // current scale so the dragged card tracks the cursor at any zoom level.
+    const scale = me.getBoundingClientRect().width / me.offsetWidth || 1;
+    const peers = Array.from(document.querySelectorAll(`[data-dc-section="${sectionId}"] [data-dc-slot]`));
+    const homes = peers.map((el) => ({ el, id: el.dataset.dcSlot, x: el.getBoundingClientRect().left }));
+    const slotXs = homes.map((h) => h.x);
+    const startIdx = order.indexOf(id);
+    const startX = e.clientX;
+    let liveOrder = order.slice();
+    me.classList.add('dc-dragging');
+
+    const layout = () => {
+      for (const h of homes) {
+        if (h.id === id) continue;
+        const slot = liveOrder.indexOf(h.id);
+        h.el.style.transform = `translateX(${(slotXs[slot] - h.x) / scale}px)`;
+      }
+    };
+
+    const move = (ev) => {
+      const dx = ev.clientX - startX;
+      me.style.transform = `translateX(${dx / scale}px)`;
+      const cur = homes[startIdx].x + dx;
+      let nearest = 0, best = Infinity;
+      for (let i = 0; i < slotXs.length; i++) {
+        const d = Math.abs(slotXs[i] - cur);
+        if (d < best) { best = d; nearest = i; }
+      }
+      if (liveOrder.indexOf(id) !== nearest) {
+        liveOrder = order.filter((k) => k !== id);
+        liveOrder.splice(nearest, 0, id);
+        layout();
+      }
+    };
+
+    const up = () => {
+      document.removeEventListener('pointermove', move);
+      document.removeEventListener('pointerup', up);
+      const finalSlot = liveOrder.indexOf(id);
+      me.classList.remove('dc-dragging');
+      me.style.transform = `translateX(${(slotXs[finalSlot] - homes[startIdx].x) / scale}px)`;
+      // After the settle transition, kill transitions + clear transforms +
+      // commit the reorder in the same frame so there's no visual snap-back.
+      setTimeout(() => {
+        for (const h of homes) { h.el.style.transition = 'none'; h.el.style.transform = ''; }
+        if (liveOrder.join('|') !== order.join('|')) onReorder(liveOrder);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          for (const h of homes) h.el.style.transition = '';
+        }));
+      }, 180);
+    };
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', up);
+  };
+
+  return (
+    <div ref={ref} data-dc-slot={id} style={{ position: 'relative', flexShrink: 0 }}>
+      <div className="dc-header" style={{ color: DC.label }} onPointerDown={(e) => e.stopPropagation()}>
+        <div className="dc-labelrow">
+          <div className="dc-grip" onPointerDown={onGripDown} title="Drag to reorder">
+            <svg width="9" height="13" viewBox="0 0 9 13" fill="currentColor"><circle cx="2" cy="2" r="1.1"/><circle cx="7" cy="2" r="1.1"/><circle cx="2" cy="6.5" r="1.1"/><circle cx="7" cy="6.5" r="1.1"/><circle cx="2" cy="11" r="1.1"/><circle cx="7" cy="11" r="1.1"/></svg>
+          </div>
+          <div className="dc-labeltext" onClick={onFocus} title="Click to focus">
+            <DCEditable value={label} onChange={onRename} onClick={(e) => e.stopPropagation()}
+              style={{ fontSize: 15, fontWeight: 500, color: DC.label, lineHeight: 1 }} />
+          </div>
+        </div>
+        <div className="dc-btns">
+          <div ref={menuRef} style={{ position: 'relative' }}>
+            <button className="dc-kebab" title="More" onClick={() => setMenuOpen((o) => !o)}>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="2.5" cy="6" r="1.1"/><circle cx="6" cy="6" r="1.1"/><circle cx="9.5" cy="6" r="1.1"/></svg>
+            </button>
+            {menuOpen && (
+              <div className="dc-menu" onPointerDown={(e) => e.stopPropagation()}>
+                <button onClick={() => doExport('png')}>Download PNG</button>
+                <button onClick={() => doExport('html')}>Download HTML</button>
+                <hr />
+                <button className="dc-danger"
+                  onClick={() => { if (confirming) { setMenuOpen(false); onDelete(); } else setConfirming(true); }}>
+                  {confirming ? 'Click again to delete' : 'Delete'}
+                </button>
+              </div>
+            )}
+          </div>
+          <button className="dc-expand" onClick={onFocus} title="Focus">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M7 1h4v4M5 11H1V7M11 1L7.5 4.5M1 11l3.5-3.5"/></svg>
+          </button>
+        </div>
+      </div>
+      <div ref={cardRef} className="dc-card"
+        style={{ borderRadius: 2, boxShadow: '0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06)', overflow: 'hidden', width, height, background: '#fff', ...style }}>
+        {children || <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 13, fontFamily: DC.font }}>{id}</div>}
+      </div>
+    </div>
+  );
+}
+
+// Inline rename — commits on blur or Enter.
+function DCEditable({ value, onChange, style, tag = 'span', onClick }) {
+  const T = tag;
+  return (
+    <T className="dc-editable" contentEditable suppressContentEditableWarning
+      onClick={onClick}
+      onPointerDown={(e) => e.stopPropagation()}
+      onBlur={(e) => onChange && onChange(e.currentTarget.textContent)}
+      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); e.currentTarget.blur(); } }}
+      style={style}>{value}</T>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Focus mode — overlay one artboard; ←/→ within section, ↑/↓ across
+// sections, Esc or backdrop click to exit.
+// ─────────────────────────────────────────────────────────────
+function DCFocusOverlay({ entry, sectionMeta, sectionOrder }) {
+  const ctx = React.useContext(DCCtx);
+  const { sectionId, artboard } = entry;
+  const sec = ctx.section(sectionId);
+  const meta = sectionMeta[sectionId];
+  const peers = meta.slotIds;
+  const aid = artboard.props.id ?? artboard.props.label;
+  const idx = peers.indexOf(aid);
+  const secIdx = sectionOrder.indexOf(sectionId);
+
+  const go = (d) => { const n = peers[(idx + d + peers.length) % peers.length]; if (n) ctx.setFocus(`${sectionId}/${n}`); };
+  const goSection = (d) => {
+    // Sections whose artboards are all deleted have slotIds:[] — step past
+    // them to the next non-empty section so ↑/↓ doesn't dead-end.
+    const n = sectionOrder.length;
+    for (let i = 1; i < n; i++) {
+      const ns = sectionOrder[(((secIdx + d * i) % n) + n) % n];
+      const first = sectionMeta[ns] && sectionMeta[ns].slotIds[0];
+      if (first) { ctx.setFocus(`${ns}/${first}`); return; }
+    }
+  };
+
+  React.useEffect(() => {
+    const k = (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); goSection(-1); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); goSection(1); }
+    };
+    document.addEventListener('keydown', k);
+    return () => document.removeEventListener('keydown', k);
+  });
+
+  const { width = 260, height = 480, children } = artboard.props;
+  const [vp, setVp] = React.useState({ w: window.innerWidth, h: window.innerHeight });
+  React.useEffect(() => { const r = () => setVp({ w: window.innerWidth, h: window.innerHeight }); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, []);
+  const scale = Math.max(0.1, Math.min((vp.w - 200) / width, (vp.h - 260) / height, 2));
+
+  const [ddOpen, setDd] = React.useState(false);
+  const Arrow = ({ dir, onClick }) => (
+    <button onClick={(e) => { e.stopPropagation(); onClick(); }}
+      style={{ position: 'absolute', top: '50%', [dir]: 28, transform: 'translateY(-50%)',
+        border: 'none', background: 'rgba(255,255,255,.08)', color: 'rgba(255,255,255,.9)',
+        width: 44, height: 44, borderRadius: 22, fontSize: 18, cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .15s' }}
+      onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,.18)')}
+      onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,.08)')}>
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <path d={dir === 'left' ? 'M11 3L5 9l6 6' : 'M7 3l6 6-6 6'} /></svg>
+    </button>
+  );
+
+  // Portal to body so position:fixed is the real viewport regardless of any
+  // transform on DesignCanvas's ancestors (including the canvas zoom itself).
+  return ReactDOM.createPortal(
+    <div onClick={() => ctx.setFocus(null)}
+      onWheel={(e) => e.preventDefault()}
+      style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(24,20,16,.6)', backdropFilter: 'blur(14px)',
+        fontFamily: DC.font, color: '#fff' }}>
+
+      {/* top bar: section dropdown (left) · close (right) */}
+      <div onClick={(e) => e.stopPropagation()}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 72, display: 'flex', alignItems: 'flex-start', padding: '16px 20px 0', gap: 16 }}>
+        <div style={{ position: 'relative' }}>
+          <button onClick={() => setDd((o) => !o)}
+            style={{ border: 'none', background: 'transparent', color: '#fff', cursor: 'pointer', padding: '6px 8px',
+              borderRadius: 6, textAlign: 'left', fontFamily: 'inherit' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: -0.3 }}>{meta.title}</span>
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{ opacity: .7 }}><path d="M2 4l3.5 3.5L9 4"/></svg>
+            </span>
+            {meta.subtitle && <span style={{ display: 'block', fontSize: 13, opacity: .6, fontWeight: 400, marginTop: 2 }}>{meta.subtitle}</span>}
+          </button>
+          {ddOpen && (
+            <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 4, background: '#2a251f', borderRadius: 8,
+              boxShadow: '0 8px 32px rgba(0,0,0,.4)', padding: 4, minWidth: 200, zIndex: 10 }}>
+              {sectionOrder.filter((sid) => sectionMeta[sid].slotIds.length).map((sid) => (
+                <button key={sid} onClick={() => { setDd(false); const f = sectionMeta[sid].slotIds[0]; if (f) ctx.setFocus(`${sid}/${f}`); }}
+                  style={{ display: 'block', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer',
+                    background: sid === sectionId ? 'rgba(255,255,255,.1)' : 'transparent', color: '#fff',
+                    padding: '8px 12px', borderRadius: 5, fontSize: 14, fontWeight: sid === sectionId ? 600 : 400, fontFamily: 'inherit' }}>
+                  {sectionMeta[sid].title}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <div style={{ flex: 1 }} />
+        <button onClick={() => ctx.setFocus(null)}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,.12)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+          style={{ border: 'none', background: 'transparent', color: 'rgba(255,255,255,.7)', width: 32, height: 32,
+            borderRadius: 16, fontSize: 20, cursor: 'pointer', lineHeight: 1, transition: 'background .12s' }}>×</button>
+      </div>
+
+      {/* card centered, label + index below — only the card itself stops
+          propagation so any backdrop click (including the margins around
+          the card) exits focus */}
+      <div
+        style={{ position: 'absolute', top: 64, bottom: 56, left: 100, right: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ width: width * scale, height: height * scale, position: 'relative' }}>
+          <div style={{ width, height, transform: `scale(${scale})`, transformOrigin: 'top left', background: '#fff', borderRadius: 2, overflow: 'hidden',
+            boxShadow: '0 20px 80px rgba(0,0,0,.4)' }}>
+            {children || <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb' }}>{aid}</div>}
+          </div>
+        </div>
+        <div onClick={(e) => e.stopPropagation()} style={{ fontSize: 14, fontWeight: 500, opacity: .85, textAlign: 'center' }}>
+          {(sec.labels || {})[aid] ?? artboard.props.label}
+          <span style={{ opacity: .5, marginLeft: 10, fontVariantNumeric: 'tabular-nums' }}>{idx + 1} / {peers.length}</span>
+        </div>
+      </div>
+
+      <Arrow dir="left" onClick={() => go(-1)} />
+      <Arrow dir="right" onClick={() => go(1)} />
+
+      {/* dots */}
+      <div onClick={(e) => e.stopPropagation()}
+        style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8 }}>
+        {peers.map((p, i) => (
+          <button key={p} onClick={() => ctx.setFocus(`${sectionId}/${p}`)}
+            style={{ border: 'none', padding: 0, cursor: 'pointer', width: 6, height: 6, borderRadius: 3,
+              background: i === idx ? '#fff' : 'rgba(255,255,255,.3)' }} />
+        ))}
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Post-it — absolute-positioned sticky note
+// ─────────────────────────────────────────────────────────────
+function DCPostIt({ children, top, left, right, bottom, rotate = -2, width = 180 }) {
+  return (
+    <div style={{
+      position: 'absolute', top, left, right, bottom, width,
+      background: DC.postitBg, padding: '14px 16px',
+      fontFamily: '"Comic Sans MS", "Marker Felt", "Segoe Print", cursive',
+      fontSize: 14, lineHeight: 1.4, color: DC.postitText,
+      boxShadow: '0 2px 8px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)',
+      transform: `rotate(${rotate}deg)`,
+      zIndex: 5,
+    }}>{children}</div>
+  );
+}
+
+Object.assign(window, { DesignCanvas, DCSection, DCArtboard, DCPostIt });
+
+
+</script>
+<script type="text/babel" data-presets="env,react">
+
+// iOS.jsx — Simplified iOS 26 (Liquid Glass) device frame
+// Based on the iOS 26 UI Kit + Figma status bar spec. No assets, no deps.
+// Exports: IOSDevice, IOSStatusBar, IOSNavBar, IOSGlassPill, IOSList, IOSListRow, IOSKeyboard
+
+// ─────────────────────────────────────────────────────────────
+// Status bar
+// ─────────────────────────────────────────────────────────────
+function IOSStatusBar({ dark = false, time = '9:41' }) {
+  const c = dark ? '#fff' : '#000';
+  return (
+    <div style={{
+      display: 'flex', gap: 154, alignItems: 'center', justifyContent: 'center',
+      padding: '21px 24px 19px', boxSizing: 'border-box',
+      position: 'relative', zIndex: 20, width: '100%',
+    }}>
+      <div style={{ flex: 1, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 1.5 }}>
+        <span style={{
+          fontFamily: '-apple-system, "SF Pro", system-ui', fontWeight: 590,
+          fontSize: 17, lineHeight: '22px', color: c,
+        }}>{time}</span>
+      </div>
+      <div style={{ flex: 1, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, paddingTop: 1, paddingRight: 1 }}>
+        <svg width="19" height="12" viewBox="0 0 19 12">
+          <rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill={c}/>
+          <rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill={c}/>
+          <rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill={c}/>
+          <rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill={c}/>
+        </svg>
+        <svg width="17" height="12" viewBox="0 0 17 12">
+          <path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill={c}/>
+          <path d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z" fill={c}/>
+          <circle cx="8.5" cy="10.5" r="1.5" fill={c}/>
+        </svg>
+        <svg width="27" height="13" viewBox="0 0 27 13">
+          <rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke={c} strokeOpacity="0.35" fill="none"/>
+          <rect x="2" y="2" width="20" height="9" rx="2" fill={c}/>
+          <path d="M25 4.5V8.5C25.8 8.2 26.5 7.2 26.5 6.5C26.5 5.8 25.8 4.8 25 4.5Z" fill={c} fillOpacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Liquid glass pill — blur + tint + shine
+// ─────────────────────────────────────────────────────────────
+function IOSGlassPill({ children, dark = false, style = {} }) {
+  return (
+    <div style={{
+      height: 44, minWidth: 44, borderRadius: 9999,
+      position: 'relative', overflow: 'hidden',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      boxShadow: dark
+        ? '0 2px 6px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.2)'
+        : '0 1px 3px rgba(0,0,0,0.07), 0 3px 10px rgba(0,0,0,0.06)',
+      ...style,
+    }}>
+      {/* blur + tint */}
+      <div style={{
+        position: 'absolute', inset: 0, borderRadius: 9999,
+        backdropFilter: 'blur(12px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+        background: dark ? 'rgba(120,120,128,0.28)' : 'rgba(255,255,255,0.5)',
+      }} />
+      {/* shine */}
+      <div style={{
+        position: 'absolute', inset: 0, borderRadius: 9999,
+        boxShadow: dark
+          ? 'inset 1.5px 1.5px 1px rgba(255,255,255,0.15), inset -1px -1px 1px rgba(255,255,255,0.08)'
+          : 'inset 1.5px 1.5px 1px rgba(255,255,255,0.7), inset -1px -1px 1px rgba(255,255,255,0.4)',
+        border: dark ? '0.5px solid rgba(255,255,255,0.15)' : '0.5px solid rgba(0,0,0,0.06)',
+      }} />
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', padding: '0 4px' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Navigation bar — glass pills + large title
+// ─────────────────────────────────────────────────────────────
+function IOSNavBar({ title = 'Title', dark = false, trailingIcon = true }) {
+  const muted = dark ? 'rgba(255,255,255,0.6)' : '#404040';
+  const text = dark ? '#fff' : '#000';
+  const pillIcon = (content) => (
+    <IOSGlassPill dark={dark}>
+      <div style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {content}
+      </div>
+    </IOSGlassPill>
+  );
+  return (
+    <div style={{
+      display: 'flex', flexDirection: 'column', gap: 10,
+      paddingTop: 62, paddingBottom: 10, position: 'relative', zIndex: 5,
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0 16px',
+      }}>
+        {/* back chevron */}
+        {pillIcon(
+          <svg width="12" height="20" viewBox="0 0 12 20" fill="none" style={{ marginLeft: -1 }}>
+            <path d="M10 2L2 10l8 8" stroke={muted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        )}
+        {/* trailing ellipsis */}
+        {trailingIcon && pillIcon(
+          <svg width="22" height="6" viewBox="0 0 22 6">
+            <circle cx="3" cy="3" r="2.5" fill={muted}/>
+            <circle cx="11" cy="3" r="2.5" fill={muted}/>
+            <circle cx="19" cy="3" r="2.5" fill={muted}/>
+          </svg>
+        )}
+      </div>
+      {/* large title */}
+      <div style={{
+        padding: '0 16px',
+        fontFamily: '-apple-system, system-ui',
+        fontSize: 34, fontWeight: 700, lineHeight: '41px',
+        color: text, letterSpacing: 0.4,
+      }}>{title}</div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Grouped list (inset card, r:26) + row (52px)
+// ─────────────────────────────────────────────────────────────
+function IOSListRow({ title, detail, icon, chevron = true, isLast = false, dark = false }) {
+  const text = dark ? '#fff' : '#000';
+  const sec = dark ? 'rgba(235,235,245,0.6)' : 'rgba(60,60,67,0.6)';
+  const ter = dark ? 'rgba(235,235,245,0.3)' : 'rgba(60,60,67,0.3)';
+  const sep = dark ? 'rgba(84,84,88,0.65)' : 'rgba(60,60,67,0.12)';
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', minHeight: 52,
+      padding: '0 16px', position: 'relative',
+      fontFamily: '-apple-system, system-ui', fontSize: 17,
+      letterSpacing: -0.43,
+    }}>
+      {icon && (
+        <div style={{
+          width: 30, height: 30, borderRadius: 7, background: icon,
+          marginRight: 12, flexShrink: 0,
+        }} />
+      )}
+      <div style={{ flex: 1, color: text }}>{title}</div>
+      {detail && <span style={{ color: sec, marginRight: 6 }}>{detail}</span>}
+      {chevron && (
+        <svg width="8" height="14" viewBox="0 0 8 14" style={{ flexShrink: 0 }}>
+          <path d="M1 1l6 6-6 6" stroke={ter} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      )}
+      {!isLast && (
+        <div style={{
+          position: 'absolute', bottom: 0, right: 0,
+          left: icon ? 58 : 16, height: 0.5, background: sep,
+        }} />
+      )}
+    </div>
+  );
+}
+
+function IOSList({ header, children, dark = false }) {
+  const hc = dark ? 'rgba(235,235,245,0.6)' : 'rgba(60,60,67,0.6)';
+  const bg = dark ? '#1C1C1E' : '#fff';
+  return (
+    <div>
+      {header && (
+        <div style={{
+          fontFamily: '-apple-system, system-ui', fontSize: 13,
+          color: hc, textTransform: 'uppercase',
+          padding: '8px 36px 6px', letterSpacing: -0.08,
+        }}>{header}</div>
+      )}
+      <div style={{
+        background: bg, borderRadius: 26,
+        margin: '0 16px', overflow: 'hidden',
+      }}>{children}</div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Device frame
+// ─────────────────────────────────────────────────────────────
+function IOSDevice({
+  children, width = 402, height = 874, dark = false,
+  title, keyboard = false,
+}) {
+  return (
+    <div style={{
+      width, height, borderRadius: 48, overflow: 'hidden',
+      position: 'relative', background: dark ? '#000' : '#F2F2F7',
+      boxShadow: '0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.12)',
+      fontFamily: '-apple-system, system-ui, sans-serif',
+      WebkitFontSmoothing: 'antialiased',
+    }}>
+      {/* dynamic island */}
+      <div style={{
+        position: 'absolute', top: 11, left: '50%', transform: 'translateX(-50%)',
+        width: 126, height: 37, borderRadius: 24, background: '#000', zIndex: 50,
+      }} />
+      {/* status bar (absolute) */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
+        <IOSStatusBar dark={dark} />
+      </div>
+      {/* nav + content */}
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        {title !== undefined && <IOSNavBar title={title} dark={dark} />}
+        <div style={{ flex: 1, overflow: 'auto' }}>{children}</div>
+        {keyboard && <IOSKeyboard dark={dark} />}
+      </div>
+      {/* home indicator — always on top */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 60,
+        height: 34, display: 'flex', justifyContent: 'center', alignItems: 'flex-end',
+        paddingBottom: 8, pointerEvents: 'none',
+      }}>
+        <div style={{
+          width: 139, height: 5, borderRadius: 100,
+          background: dark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.25)',
+        }} />
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Keyboard — iOS 26 liquid glass
+// ─────────────────────────────────────────────────────────────
+function IOSKeyboard({ dark = false }) {
+  const glyph = dark ? 'rgba(255,255,255,0.7)' : '#595959';
+  const sugg = dark ? 'rgba(255,255,255,0.6)' : '#333';
+  const keyBg = dark ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.85)';
+
+  // special-key icons
+  const icons = {
+    shift: <svg width="19" height="17" viewBox="0 0 19 17"><path d="M9.5 1L1 9.5h4.5V16h8V9.5H18L9.5 1z" fill={glyph}/></svg>,
+    del: <svg width="23" height="17" viewBox="0 0 23 17"><path d="M7 1h13a2 2 0 012 2v11a2 2 0 01-2 2H7l-6-7.5L7 1z" fill="none" stroke={glyph} strokeWidth="1.6" strokeLinejoin="round"/><path d="M10 5l7 7M17 5l-7 7" stroke={glyph} strokeWidth="1.6" strokeLinecap="round"/></svg>,
+    ret: <svg width="20" height="14" viewBox="0 0 20 14"><path d="M18 1v6H4m0 0l4-4M4 7l4 4" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  };
+
+  const key = (content, { w, flex, ret, fs = 25, k } = {}) => (
+    <div key={k} style={{
+      height: 42, borderRadius: 8.5,
+      flex: flex ? 1 : undefined, width: w, minWidth: 0,
+      background: ret ? '#08f' : keyBg,
+      boxShadow: '0 1px 0 rgba(0,0,0,0.075)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontFamily: '-apple-system, "SF Compact", system-ui',
+      fontSize: fs, fontWeight: 458, color: ret ? '#fff' : glyph,
+    }}>{content}</div>
+  );
+
+  const row = (keys, pad = 0) => (
+    <div style={{ display: 'flex', gap: 6.5, justifyContent: 'center', padding: `0 ${pad}px` }}>
+      {keys.map(l => key(l, { flex: true, k: l }))}
+    </div>
+  );
+
+  return (
+    <div style={{
+      position: 'relative', zIndex: 15, borderRadius: 27, overflow: 'hidden',
+      padding: '11px 0 2px',
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      boxShadow: dark
+        ? '0 -2px 20px rgba(0,0,0,0.09)'
+        : '0 -1px 6px rgba(0,0,0,0.018), 0 -3px 20px rgba(0,0,0,0.012)',
+    }}>
+      {/* liquid glass bg — same recipe as nav pills */}
+      <div style={{
+        position: 'absolute', inset: 0, borderRadius: 27,
+        backdropFilter: 'blur(12px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+        background: dark ? 'rgba(120,120,128,0.14)' : 'rgba(255,255,255,0.25)',
+      }} />
+      <div style={{
+        position: 'absolute', inset: 0, borderRadius: 27,
+        boxShadow: dark
+          ? 'inset 1.5px 1.5px 1px rgba(255,255,255,0.15)'
+          : 'inset 1.5px 1.5px 1px rgba(255,255,255,0.7), inset -1px -1px 1px rgba(255,255,255,0.4)',
+        border: dark ? '0.5px solid rgba(255,255,255,0.15)' : '0.5px solid rgba(0,0,0,0.06)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* autocorrect bar */}
+      <div style={{
+        display: 'flex', gap: 20, alignItems: 'center',
+        padding: '8px 22px 13px', width: '100%', boxSizing: 'border-box',
+        position: 'relative',
+      }}>
+        {['"The"', 'the', 'to'].map((w, i) => (
+          <React.Fragment key={i}>
+            {i > 0 && <div style={{ width: 1, height: 25, background: '#ccc', opacity: 0.3 }} />}
+            <div style={{
+              flex: 1, textAlign: 'center',
+              fontFamily: '-apple-system, system-ui', fontSize: 17,
+              color: sugg, letterSpacing: -0.43, lineHeight: '22px',
+            }}>{w}</div>
+          </React.Fragment>
+        ))}
+      </div>
+
+      {/* key layout */}
+      <div style={{
+        display: 'flex', flexDirection: 'column', gap: 13,
+        padding: '0 6.5px', width: '100%', boxSizing: 'border-box',
+        position: 'relative',
+      }}>
+        {row(['q','w','e','r','t','y','u','i','o','p'])}
+        {row(['a','s','d','f','g','h','j','k','l'], 20)}
+        <div style={{ display: 'flex', gap: 14.25, alignItems: 'center' }}>
+          {key(icons.shift, { w: 45, k: 'shift' })}
+          <div style={{ display: 'flex', gap: 6.5, flex: 1 }}>
+            {['z','x','c','v','b','n','m'].map(l => key(l, { flex: true, k: l }))}
+          </div>
+          {key(icons.del, { w: 45, k: 'del' })}
+        </div>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          {key('ABC', { w: 92.25, fs: 18, k: 'abc' })}
+          {key('', { flex: true, k: 'space' })}
+          {key(icons.ret, { w: 92.25, ret: true, k: 'ret' })}
+        </div>
+      </div>
+
+      {/* bottom spacer (emoji+mic area, icons omitted) */}
+      <div style={{ height: 56, width: '100%', position: 'relative' }} />
+    </div>
+  );
+}
+
+Object.assign(window, {
+  IOSDevice, IOSStatusBar, IOSNavBar, IOSGlassPill, IOSList, IOSListRow, IOSKeyboard,
+});
+
+</script>
+<script type="text/babel" data-presets="env,react">
+// Components for Mecca chat — Rail, Inbox, ChatPane
+const { useState, useMemo, useEffect, useRef, useLayoutEffect } = React;
+const D = window.MeccaData;
+
+// ── Iconography (inline SVG so we don't depend on lucide) ────────────────────
+const Icon = ({ d, size = 16, stroke = 1.6, fill = 'none', className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor"
+    strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    {d}
+  </svg>
+);
+const I = {
+  msg:    (p) => <Icon {...p} d={<><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></>} />,
+  check:  (p) => <Icon {...p} d={<><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m9 12 2 2 4-4"/></>} />,
+  cart:   (p) => <Icon {...p} d={<><path d="M2 3h2l3 12h13l3-9H6.5"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></>} />,
+  alert:  (p) => <Icon {...p} d={<><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></>} />,
+  user:   (p) => <Icon {...p} d={<><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>} />,
+  search: (p) => <Icon {...p} d={<><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></>} />,
+  plus:   (p) => <Icon {...p} d={<><path d="M12 5v14M5 12h14"/></>} />,
+  chev:   (p) => <Icon {...p} d={<><path d="m6 9 6 6 6-6"/></>} />,
+  more:   (p) => <Icon {...p} d={<><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></>} />,
+  pin:    (p) => <Icon {...p} d={<><path d="M12 17v5"/><path d="M9 10.76V6h6v4.76l3 3.24v3H6v-3z"/></>} />,
+  panelL: (p) => <Icon {...p} d={<><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></>} />,
+  panelR: (p) => <Icon {...p} d={<><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m13 9 3 3-3 3"/></>} />,
+  send:   (p) => <Icon {...p} d={<><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4 20-7z"/></>} />,
+  paper:  (p) => <Icon {...p} d={<><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></>} />,
+  smile:  (p) => <Icon {...p} d={<><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></>} />,
+  mic:    (p) => <Icon {...p} d={<><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2"/><path d="M12 19v3"/></>} />,
+  phone:  (p) => <Icon {...p} d={<><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></>} />,
+  video:  (p) => <Icon {...p} d={<><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></>} />,
+  info:   (p) => <Icon {...p} d={<><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></>} />,
+  filter: (p) => <Icon {...p} d={<><path d="M3 6h18"/><path d="M7 12h10"/><path d="M11 18h2"/></>} />,
+  link:   (p) => <Icon {...p} d={<><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></>} />,
+  reply:  (p) => <Icon {...p} d={<><path d="M9 17 4 12l5-5"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></>} />,
+  sparkles: (p) => <Icon {...p} d={<><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6 7.7 7.7M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></>} />,
+  dot:    (p) => <Icon {...p} d={<><circle cx="12" cy="12" r="3" fill="currentColor"/></>} fill="currentColor" />,
+};
+
+// ── Type config: glyphs + tonal hues for the type accent system ──────────────
+const TYPE_CFG = {
+  'project':     { Glyph: I.msg,   label: 'Project',     hue: 220, name: 'Project Chat' },
+  'task':        { Glyph: I.check, label: 'Task',        hue: 155, name: 'Task' },
+  'procurement': { Glyph: I.cart,  label: 'Procurement', hue: 35,  name: 'Procurement' },
+  'site-issue':  { Glyph: I.alert, label: 'Site Issue',  hue: 0,   name: 'Site Issue' },
+  'direct':      { Glyph: I.user,  label: 'Direct',      hue: 270, name: 'Direct' },
+};
+
+// Avatar — initials chip with deterministic hue
+function Avatar({ p, size = 32, ring = false }) {
+  const hue = p.hue ?? 220;
+  const bg = `oklch(0.42 0.06 ${hue})`;
+  const fg = `oklch(0.96 0.02 ${hue})`;
+  return (
+    <div
+      className={'mc-avatar' + (ring ? ' mc-avatar--ring' : '')}
+      style={{ width: size, height: size, background: bg, color: fg, fontSize: Math.round(size * 0.36) }}
+      title={p.name}
+    >
+      {p.avatar}
+    </div>
+  );
+}
+
+function StackedAvatars({ people, max = 3, size = 22 }) {
+  const visible = people.slice(0, max);
+  return (
+    <div className="mc-avatar-stack" style={{ paddingRight: (people.length - 1) * 6 }}>
+      {visible.map((p, i) => (
+        <div key={p.name} style={{ marginLeft: i === 0 ? 0 : -6, zIndex: max - i }}>
+          <Avatar p={p} size={size} ring />
+        </div>
+      ))}
+      {people.length > max && (
+        <div className="mc-avatar mc-avatar--more" style={{ width: size, height: size, marginLeft: -6, fontSize: 9 }}>
+          +{people.length - max}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Tiny priority dot (P1/P2). P3/none renders nothing.
+function PriorityDot({ level }) {
+  if (level === 'p1') return <span className="mc-pdot mc-pdot--p1" title="Critical" />;
+  if (level === 'p2') return <span className="mc-pdot mc-pdot--p2" title="High" />;
+  return null;
+}
+
+// ── Project Bubble Rail ──────────────────────────────────────────────────────
+function ProjectBubbleRail({ variant, projects, selectedProjectId, selectedMode, onSelectProject, onSelectDirect, onToggleVariant }) {
+  // variant: 'rail' (icons only), 'expanded' (icons + name), 'collapsed' (search-style)
+  const collapsed = variant === 'collapsed';
+  const expanded = variant === 'expanded';
+
+  const sections = useMemo(() => {
+    const critical = projects.filter(p => p.priorityLevel === 'critical');
+    const active = projects.filter(p => p.priorityLevel === 'high' || (p.priorityLevel === 'normal' && p.unreadMessages > 0));
+    const quiet = projects.filter(p => p.priorityLevel === 'normal' && p.unreadMessages === 0);
+    return [
+      { label: 'Critical', items: critical },
+      { label: 'Active',   items: active },
+      { label: 'Quiet',    items: quiet },
+    ].filter(s => s.items.length);
+  }, [projects]);
+
+  const dmUnread = D.getGlobalDMs().reduce((s, c) => s + c.unreadCount, 0);
+
+  if (collapsed) {
+    return (
+      <aside className="mc-rail mc-rail--collapsed">
+        <div className="mc-rail__brand">
+          <div className="mc-logo">M</div>
+        </div>
+        <button className="mc-rail__expand" onClick={() => onToggleVariant('rail')} title="Expand sidebar">
+          <I.panelR size={16} />
+        </button>
+      </aside>
+    );
+  }
+
+  return (
+    <aside className={'mc-rail ' + (expanded ? 'mc-rail--expanded' : 'mc-rail--rail')}>
+      <div className="mc-rail__brand">
+        <div className="mc-logo">M</div>
+        {expanded && <span className="mc-rail__brandname">Mecca</span>}
+        <div style={{flex:1}} />
+        {expanded && (
+          <button className="mc-iconbtn" onClick={() => onToggleVariant('rail')} title="Collapse to rail">
+            <I.panelL size={16} />
+          </button>
+        )}
+        {!expanded && (
+          <button className="mc-rail__expand-mini" onClick={() => onToggleVariant('expanded')} title="Expand">
+            <I.panelR size={14} />
+          </button>
+        )}
+      </div>
+
+      <div className="mc-rail__scroll">
+        <button
+          className={'mc-rail__row mc-rail__row--dm' + (selectedMode === 'direct' ? ' is-selected' : '')}
+          onClick={onSelectDirect}
+        >
+          <div className="mc-rail__bubble mc-rail__bubble--dm">
+            <I.user size={18} />
+            {dmUnread > 0 && <span className="mc-rail__badge">{dmUnread}</span>}
+          </div>
+          {expanded && <span className="mc-rail__name">Direct messages</span>}
+          {expanded && dmUnread > 0 && <span className="mc-rail__count">{dmUnread}</span>}
+        </button>
+
+        <div className="mc-rail__divider" />
+
+        {sections.map(section => (
+          <div key={section.label} className="mc-rail__section">
+            {expanded && <div className="mc-rail__section-label">{section.label}</div>}
+            {!expanded && <div className="mc-rail__section-tick" title={section.label} />}
+            {section.items.map(p => {
+              const isSel = selectedMode === 'project' && selectedProjectId === p.id;
+              const unread = D.getTotalUnread(p.id);
+              const bk = D.getUnreadBreakdown(p.id);
+              const chips = [
+                { key: 'project',     count: bk.project,         hue: 220, Glyph: I.msg,   title: 'Project messages' },
+                { key: 'task',        count: bk.task,            hue: 155, Glyph: I.check, title: 'Tasks' },
+                { key: 'procurement', count: bk.procurement,     hue: 35,  Glyph: I.cart,  title: 'Procurement' },
+                { key: 'site-issue',  count: bk['site-issue'],   hue: 0,   Glyph: I.alert, title: 'Site issues' },
+              ];
+              const visibleChips = chips.filter(c => c.count > 0);
+              return (
+                <button
+                  key={p.id}
+                  className={'mc-rail__row' + (isSel ? ' is-selected' : '')}
+                  onClick={() => onSelectProject(p.id)}
+                  title={!expanded ? p.name : undefined}
+                >
+                  <div
+                    className="mc-rail__bubble"
+                    style={{
+                      background: isSel ? 'var(--mc-accent)' : 'var(--mc-surface)',
+                      color: isSel ? 'var(--mc-accent-fg)' : 'var(--mc-text-mute)',
+                    }}
+                  >
+                    {p.initials}
+                    {p.priorityLevel === 'critical' && <span className="mc-rail__priority mc-rail__priority--crit" />}
+                    {p.priorityLevel === 'high' && <span className="mc-rail__priority mc-rail__priority--high" />}
+                    {!expanded && unread > 0 && <span className="mc-rail__badge">{unread > 9 ? '9+' : unread}</span>}
+                  </div>
+                  {expanded && (
+                    <div className="mc-rail__rowtext">
+                      <span className="mc-rail__name">{p.name}</span>
+                      {visibleChips.length > 0 ? (
+                        <div className="mc-rail__chips">
+                          {visibleChips.map(c => (
+                            <span
+                              key={c.key}
+                              className="mc-rail__chip"
+                              title={`${c.count} ${c.title.toLowerCase()}`}
+                              style={{
+                                background: `oklch(0.32 0.08 ${c.hue})`,
+                                color: `oklch(0.92 0.04 ${c.hue})`,
+                                borderColor: `oklch(0.42 0.08 ${c.hue} / 0.5)`,
+                              }}
+                            >
+                              <c.Glyph size={10} stroke={2} />
+                              {c.count}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="mc-rail__reason">{p.priorityReason}</span>
+                      )}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+
+      <div className="mc-rail__foot">
+        <button className="mc-iconbtn" title="New conversation">
+          <I.plus size={16} />
+        </button>
+        <Avatar p={D.participants.you} size={28} ring />
+      </div>
+    </aside>
+  );
+}
+
+window.MC = window.MC || {};
+window.MC.ProjectBubbleRail = ProjectBubbleRail;
+window.MC.Avatar = Avatar;
+window.MC.StackedAvatars = StackedAvatars;
+window.MC.PriorityDot = PriorityDot;
+window.MC.TYPE_CFG = TYPE_CFG;
+window.MC.I = I;
+
+</script>
+<script type="text/babel" data-presets="env,react">
+// Phone-specific components — projects list, project inbox, chat
+const { useState: pUseState, useMemo: pUseMemo, useEffect: pUseEffect, useRef: pUseRef, useLayoutEffect: pUseLayoutEffect } = React;
+window.MC = window.MC || {};
+const PD = window.MeccaData;
+// Lazy proxies — components-rail.jsx may not have populated window.MC yet
+// when this script evaluates (Babel script order isn't guaranteed).
+const PMC = new Proxy({}, { get: (_, k) => window.MC[k] });
+const PI = new Proxy({}, { get: (_, k) => (window.MC.I || {})[k] });
+const PTYPE = new Proxy({}, { get: (_, k) => (window.MC.TYPE_CFG || {})[k] });
+
+// Back-arrow icon
+const BackIcon = (p) => (
+  <svg width={p.size||20} height={p.size||20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 18 9 12l6-6" />
+  </svg>
+);
+
+// ── Projects list (top-level inbox / "rail" replaced by full screen) ─────────
+function PhoneProjects({ projects, onOpenProject, onOpenDM, dmUnread }) {
+  const [search, setSearch] = pUseState('');
+  const [filter, setFilter] = pUseState('all');
+
+  const sections = pUseMemo(() => {
+    let list = projects;
+    if (filter === 'critical') list = list.filter(p => p.priorityLevel === 'critical');
+    if (filter === 'unread') list = list.filter(p => PD.getTotalUnread(p.id) > 0);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter(p => p.name.toLowerCase().includes(q));
+    }
+    const critical = list.filter(p => p.priorityLevel === 'critical');
+    const active = list.filter(p => p.priorityLevel === 'high' || (p.priorityLevel === 'normal' && PD.getTotalUnread(p.id) > 0));
+    const quiet = list.filter(p => p.priorityLevel === 'normal' && PD.getTotalUnread(p.id) === 0);
+    return [
+      { label: 'Critical', items: critical },
+      { label: 'Active',   items: active },
+      { label: 'Quiet',    items: quiet },
+    ].filter(s => s.items.length);
+  }, [projects, filter, search]);
+
+  return (
+    <div className="ph">
+      <div className="ph-top">
+        <div className="ph-top__title">
+          <h1>Mecca</h1>
+          <div className="ph-top__sub">Projects · {projects.length}</div>
+        </div>
+        <div className="ph-top__actions">
+          <button className="ph-top__btn"><PI.search size={18} /></button>
+          <button className="ph-top__btn"><PI.more size={18} /></button>
+        </div>
+      </div>
+
+      <div className="ph-search">
+        <PI.search size={14} />
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search projects…" />
+      </div>
+
+      <div className="ph-filter">
+        {['all','critical','unread'].map(f => (
+          <button key={f} className={'ph-filter__pill' + (filter===f?' is-active':'')} onClick={() => setFilter(f)}>
+            {f === 'all' ? 'All projects' : f === 'critical' ? 'Critical' : 'Unread'}
+          </button>
+        ))}
+      </div>
+
+      <div className="ph-scroll">
+        {/* Direct messages entry */}
+        <button className="ph-conv" onClick={onOpenDM}>
+          <div className="ph-conv__lead">
+            <div className="ph-conv__icon" style={{ '--h': 270 }}>
+              <PI.user size={18} stroke={1.8} />
+            </div>
+            {dmUnread > 0 && <span className="ph-conv__unreaddot" />}
+          </div>
+          <div className="ph-conv__body">
+            <div className="ph-conv__top">
+              <span className={'ph-conv__title' + (dmUnread>0?' is-unread':'')}>Direct messages</span>
+            </div>
+            <div className="ph-conv__sub">
+              <span className="ph-conv__preview">Person-to-person · not linked to a project</span>
+              {dmUnread > 0 && <span className="ph-conv__badge">{dmUnread}</span>}
+            </div>
+          </div>
+        </button>
+
+        {sections.map(s => (
+          <div key={s.label}>
+            <div className="ph-section">
+              <span>{s.label}</span>
+              <span className="ph-section__count">{s.items.length}</span>
+            </div>
+            <div className="ph-projlist">
+              {s.items.map(p => {
+                const unread = PD.getTotalUnread(p.id);
+                const bk = PD.getUnreadBreakdown(p.id);
+                const chips = [
+                  { key: 'project',     count: bk.project,         hue: 220, Glyph: PI.msg,   title: 'messages' },
+                  { key: 'task',        count: bk.task,            hue: 155, Glyph: PI.check, title: 'tasks' },
+                  { key: 'procurement', count: bk.procurement,     hue: 35,  Glyph: PI.cart,  title: 'procurement' },
+                  { key: 'site-issue',  count: bk['site-issue'],   hue: 0,   Glyph: PI.alert, title: 'site issues' },
+                ].filter(c => c.count > 0);
+                return (
+                  <button key={p.id} className="ph-projcard" onClick={() => onOpenProject(p.id)}>
+                    <div className="ph-projcard__bubble">
+                      {p.initials}
+                      {p.priorityLevel === 'critical' && <span className="ph-projcard__priority ph-projcard__priority--crit" />}
+                      {p.priorityLevel === 'high' && <span className="ph-projcard__priority ph-projcard__priority--high" />}
+                    </div>
+                    <div className="ph-projcard__body">
+                      <div className="ph-projcard__topline">
+                        <span className="ph-projcard__name">{p.name}</span>
+                        {unread > 0 && <span className="ph-conv__badge">{unread > 9 ? '9+' : unread}</span>}
+                      </div>
+                      <span className="ph-projcard__reason">{p.priorityReason}</span>
+                      {chips.length > 0 && (
+                        <div className="ph-projcard__chips">
+                          {chips.map(c => (
+                            <span key={c.key} className="ph-chip"
+                              style={{
+                                background: `oklch(0.32 0.08 ${c.hue})`,
+                                color: `oklch(0.92 0.04 ${c.hue})`,
+                                borderColor: `oklch(0.42 0.08 ${c.hue} / 0.5)`,
+                              }}
+                              title={`${c.count} ${c.title}`}>
+                              <c.Glyph size={10} stroke={2} />
+                              {c.count}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <PhoneTabbar active="messages" />
+    </div>
+  );
+}
+
+// ── Project inbox (conversations within a project) ──────────────────────────
+function PhoneProjectInbox({ project, onBack, onOpenConv }) {
+  const [search, setSearch] = pUseState('');
+  const [filter, setFilter] = pUseState('all');
+
+  const all = pUseMemo(() => PD.getProjectConversations(project.id), [project.id]);
+  const filtered = pUseMemo(() => {
+    let list = all;
+    if (filter === 'unread') list = list.filter(c => c.unreadCount > 0);
+    if (filter === 'flagged') list = list.filter(c => c.priorityLevel === 'p1' || c.priorityLevel === 'p2');
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter(c => c.title.toLowerCase().includes(q) || c.lastMessage.toLowerCase().includes(q));
+    }
+    return list;
+  }, [all, filter, search]);
+
+  const SECTIONS = [
+    { type: 'project', label: 'Project chat' },
+    { type: 'task', label: 'Tasks' },
+    { type: 'procurement', label: 'Procurement' },
+    { type: 'site-issue', label: 'Site issues' },
+  ];
+  const grouped = pUseMemo(() => {
+    const m = new Map();
+    for (const c of filtered) {
+      if (!m.has(c.type)) m.set(c.type, []);
+      m.get(c.type).push(c);
+    }
+    return m;
+  }, [filtered]);
+  const projDMs = pUseMemo(() => PD.getProjectDMs(project.id), [project.id]);
+
+  return (
+    <div className="ph">
+      <div className="ph-top">
+        <button className="ph-top__back" onClick={onBack}><BackIcon /></button>
+        <div className="ph-top__title">
+          <h1>{project.name}</h1>
+          <div className="ph-top__sub">{project.manager} · {project.priorityReason}</div>
+        </div>
+        <div className="ph-top__actions">
+          <button className="ph-top__btn"><PI.more size={18} /></button>
+        </div>
+      </div>
+
+      <div className="ph-projhead">
+        <div className="ph-projhead__row">
+          <div className="ph-projhead__bubble">{project.initials}</div>
+          <div style={{flex:1, minWidth:0}}>
+            <div className="ph-projhead__name">{project.name}</div>
+            <div className="ph-projhead__sub">{project.manager}</div>
+          </div>
+        </div>
+        <div className="ph-projhead__stats">
+          {project.unreadMessages > 0 && (
+            <span className="ph-stat"><span className="ph-statdot ph-statdot--blue" />{project.unreadMessages} unread</span>
+          )}
+          {project.overdueTasks > 0 && (
+            <span className="ph-stat"><span className="ph-statdot ph-statdot--red" />{project.overdueTasks} overdue</span>
+          )}
+          {project.dueTodayTasks > 0 && (
+            <span className="ph-stat"><span className="ph-statdot ph-statdot--amber" />{project.dueTodayTasks} due today</span>
+          )}
+          {project.hasWaitingApproval && (
+            <span className="ph-stat"><span className="ph-statdot ph-statdot--violet" />waiting approval</span>
+          )}
+        </div>
+        <div className="ph-projnav">
+          <button className="ph-projnav__btn is-primary"><PI.panelR size={15} /><span>Open</span></button>
+          <button className="ph-projnav__btn"><PI.paper size={15} /><span>Files</span></button>
+          <button className="ph-projnav__btn">
+            <PI.check size={15} /><span>Tasks</span>
+            {project.overdueTasks > 0 && <span className="ph-projnav__btn-count">{project.overdueTasks}</span>}
+          </button>
+          <button className="ph-projnav__btn"><PI.cart size={15} /><span>Procure</span></button>
+        </div>
+      </div>
+
+      <div className="ph-search">
+        <PI.search size={14} />
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search conversations…" />
+      </div>
+
+      <div className="ph-filter">
+        {['all','unread','flagged'].map(f => (
+          <button key={f} className={'ph-filter__pill' + (filter===f?' is-active':'')} onClick={() => setFilter(f)}>
+            {f === 'all' ? 'All' : f === 'unread' ? 'Unread' : 'Flagged'}
+          </button>
+        ))}
+      </div>
+
+      <div className="ph-scroll">
+        {SECTIONS.map(def => {
+          const items = grouped.get(def.type) || [];
+          if (!items.length) return null;
+          const cfg = PTYPE[def.type];
+          const Glyph = cfg.Glyph;
+          const unread = items.reduce((s,c) => s + c.unreadCount, 0);
+          return (
+            <div key={def.type}>
+              <div className="ph-section">
+                <span style={{ color: `oklch(0.7 0.12 ${cfg.hue})`, display:'inline-flex' }}><Glyph size={12} stroke={2} /></span>
+                <span>{def.label}</span>
+                <span className="ph-section__count">{items.length}</span>
+                {unread > 0 && <span className="ph-section__unread">{unread}</span>}
+              </div>
+              {items.map(c => <PhoneConvRow key={c.id} conv={c} onClick={() => onOpenConv(c.id)} />)}
+            </div>
+          );
+        })}
+        {projDMs.length > 0 && (
+          <div>
+            <div className="ph-section">
+              <span style={{color:`oklch(0.7 0.12 270)`, display:'inline-flex'}}><PI.user size={12} stroke={2} /></span>
+              <span>Direct messages</span>
+              <span className="ph-section__count">{projDMs.length}</span>
+            </div>
+            {projDMs.map(c => <PhoneConvRow key={c.id} conv={c} onClick={() => onOpenConv(c.id)} />)}
+          </div>
+        )}
+      </div>
+
+      <button className="ph-fab" title="New conversation"><PI.plus size={22} /></button>
+      <PhoneTabbar active="messages" />
+    </div>
+  );
+}
+
+function PhoneConvRow({ conv, onClick }) {
+  const cfg = PTYPE[conv.type] || PTYPE.project;
+  const Glyph = (cfg && cfg.Glyph) || (window.MC.I && window.MC.I.msg);
+  const hasUnread = conv.unreadCount > 0;
+  const isDM = conv.type === 'direct';
+  return (
+    <button className="ph-conv" onClick={onClick}>
+      <div className="ph-conv__lead">
+        {isDM && conv.participants[0] ? (
+          <PMC.Avatar p={conv.participants[0]} size={40} />
+        ) : (
+          <div className="ph-conv__icon" style={{ '--h': cfg.hue }}>
+            <Glyph size={16} stroke={1.8} />
+          </div>
+        )}
+        {hasUnread && <span className="ph-conv__unreaddot" />}
+      </div>
+      <div className="ph-conv__body">
+        <div className="ph-conv__top">
+          <span className={'ph-conv__title' + (hasUnread?' is-unread':'')}>{conv.title}</span>
+          {conv.priorityLevel === 'p1' && <PMC.PriorityDot level="p1" />}
+          {conv.priorityLevel === 'p2' && <PMC.PriorityDot level="p2" />}
+          <span className="ph-conv__time">{PD.fmtRelative(conv.timestamp)}</span>
+        </div>
+        <div className="ph-conv__sub">
+          <span className="ph-conv__preview">
+            {!isDM && conv.lastSender && <span className="ph-conv__sender">{conv.lastSender.split(' ')[0]}: </span>}
+            {conv.lastMessage}
+          </span>
+          {hasUnread && <span className="ph-conv__badge">{conv.unreadCount > 9 ? '9+' : conv.unreadCount}</span>}
+        </div>
+        {conv.subtitle && <div className="ph-conv__meta">{conv.subtitle}</div>}
+      </div>
+    </button>
+  );
+}
+
+// ── Chat screen ──────────────────────────────────────────────────────────────
+function PhoneChat({ conv, project, onBack }) {
+  const [composed, setComposed] = pUseState([]);
+  const [text, setText] = pUseState('');
+  const scrollRef = pUseRef(null);
+  const cfg = PTYPE[conv.type] || PTYPE.project;
+  const Glyph = (cfg && cfg.Glyph) || (window.MC.I && window.MC.I.msg);
+  const others = conv.participants.filter(p => p.name !== 'You');
+
+  const baseMsgs = pUseMemo(() => PD.getMessages(conv.id), [conv.id]);
+  const allMsgs = pUseMemo(() => groupPhone(baseMsgs.concat(composed)), [baseMsgs, composed]);
+
+  pUseLayoutEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [allMsgs.length, conv.id]);
+
+  const send = () => {
+    const t = text.trim();
+    if (!t) return;
+    setComposed(prev => [...prev, {
+      id: 'u' + Date.now(), content: t, sender: PD.participants.you, timestamp: new Date(), isOwn: true,
+    }]);
+    setText('');
+  };
+
+  return (
+    <div className="ph">
+      <div className="ph-chat">
+        <div className="ph-chat__head">
+          <button className="ph-chat__head-back" onClick={onBack}><BackIcon /></button>
+          {conv.type === 'direct' && conv.participants[0] ? (
+            <PMC.Avatar p={conv.participants[0]} size={36} ring />
+          ) : (
+            <div className="ph-chat__head-icon" style={{ '--h': cfg.hue }}>
+              <Glyph size={16} stroke={1.8} />
+            </div>
+          )}
+          <div className="ph-chat__head-text">
+            <div className="ph-chat__head-title">
+              <span style={{overflow:'hidden', textOverflow:'ellipsis'}}>{conv.title}</span>
+              {conv.priorityLevel === 'p1' && <span className="ph-chat__head-pill ph-chat__head-pill--crit">Critical</span>}
+              {conv.priorityLevel === 'p2' && <span className="ph-chat__head-pill ph-chat__head-pill--high">High</span>}
+            </div>
+            <div className="ph-chat__head-sub">
+              {conv.type !== 'direct' && project && <span>{project.name}</span>}
+              {others.length > 0 && conv.type !== 'direct' && <span>· {others.length + 1} members</span>}
+              {conv.type === 'direct' && conv.participants[0] && <span>{conv.participants[0].role}</span>}
+            </div>
+          </div>
+          <div className="ph-chat__head-actions">
+            <button className="ph-chat__head-btn"><PI.phone size={17} /></button>
+            <button className="ph-chat__head-btn"><PI.video size={17} /></button>
+          </div>
+        </div>
+
+        {conv.subtitle && conv.type !== 'project' && conv.type !== 'direct' && (
+          <div className="ph-chat__context" style={{ '--h': cfg.hue }}>
+            <div className="ph-chat__context-icon"><Glyph size={13} stroke={2} /></div>
+            <div className="ph-chat__context-body">
+              <div className="ph-chat__context-title">{conv.title}</div>
+              <div className="ph-chat__context-meta">{conv.subtitle}</div>
+            </div>
+          </div>
+        )}
+
+        <div className="ph-chat__stream" ref={scrollRef}>
+          {allMsgs.map(m => <PhoneMsg key={m.id} m={m} />)}
+        </div>
+
+        <div className="ph-composer">
+          <button className="ph-composer__btn"><PI.plus size={20} /></button>
+          <div className="ph-composer__field">
+            <input
+              style={{flex:1, border:0, outline:'none', background:'transparent', color:'var(--mc-text)', fontSize:14}}
+              value={text}
+              onChange={e=>setText(e.target.value)}
+              onKeyDown={e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } }}
+              placeholder="Message…"
+            />
+            <PI.smile size={18} />
+          </div>
+          {text.trim() ? (
+            <button className="ph-composer__send" onClick={send}><PI.send size={16} /></button>
+          ) : (
+            <button className="ph-composer__btn"><PI.mic size={20} /></button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function groupPhone(msgs) {
+  const out = [];
+  for (let i = 0; i < msgs.length; i++) {
+    const m = msgs[i], prev = msgs[i-1], next = msgs[i+1];
+    const sP = prev && prev.sender.name === m.sender.name && (m.timestamp - prev.timestamp) < 5*60_000;
+    const sN = next && next.sender.name === m.sender.name && (next.timestamp - m.timestamp) < 5*60_000;
+    let pos;
+    if (!sP && !sN) pos = 'single';
+    else if (!sP && sN) pos = 'first';
+    else if (sP && sN) pos = 'middle';
+    else pos = 'last';
+    let showDay = !prev || prev.timestamp.toDateString() !== m.timestamp.toDateString();
+    out.push({ ...m, pos, showDay });
+  }
+  return out;
+}
+
+function PhoneMsg({ m }) {
+  const own = m.isOwn;
+  const showAvatar = !own && (m.pos === 'last' || m.pos === 'single');
+  const showName = !own && (m.pos === 'first' || m.pos === 'single');
+  return (
+    <>
+      {m.showDay && <div className="ph-day"><span>{PD.fmtDay(m.timestamp)}</span></div>}
+      <div className={'ph-msg ph-msg--' + (own?'own':'other') + ' ph-msg--' + m.pos}>
+        <div className="ph-msg__avatar">
+          {showAvatar && !own && <PMC.Avatar p={m.sender} size={24} />}
+        </div>
+        <div className="ph-msg__col">
+          {showName && (
+            <div className="ph-msg__name">
+              <span style={{ color: `oklch(0.78 0.08 ${m.sender.hue ?? 220})` }}>{m.sender.name}</span>
+              <span className="ph-msg__role">{m.sender.role}</span>
+            </div>
+          )}
+          <div className="ph-msg__bubble">
+            <span>{m.content}</span>
+            <span className="ph-msg__time">{PD.fmtTime(m.timestamp)}</span>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Direct messages list ─────────────────────────────────────────────────────
+function PhoneDMs({ onBack, onOpenConv }) {
+  const dms = PD.getGlobalDMs();
+  return (
+    <div className="ph">
+      <div className="ph-top">
+        <button className="ph-top__back" onClick={onBack}><BackIcon /></button>
+        <div className="ph-top__title">
+          <h1>Direct messages</h1>
+          <div className="ph-top__sub">Person-to-person</div>
+        </div>
+      </div>
+      <div className="ph-search">
+        <PI.search size={14} />
+        <input placeholder="Search people…" />
+      </div>
+      <div className="ph-scroll">
+        {dms.map(c => <PhoneConvRow key={c.id} conv={c} onClick={() => onOpenConv(c.id)} />)}
+      </div>
+      <PhoneTabbar active="messages" />
+    </div>
+  );
+}
+
+function PhoneTabbar({ active }) {
+  const items = [
+    { id: 'messages', label: 'Messages', icon: PI.msg },
+    { id: 'tasks', label: 'Tasks', icon: PI.check },
+    { id: 'projects', label: 'Projects', icon: PI.panelR },
+    { id: 'me', label: 'Me', icon: PI.user },
+  ];
+  return (
+    <div className="ph-tabbar">
+      {items.map(i => {
+        const I = i.icon;
+        return (
+          <button key={i.id} className={'ph-tab' + (active===i.id?' is-active':'')}>
+            <I size={20} stroke={active===i.id?2.2:1.6} />
+            <span>{i.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+window.PMC = { PhoneProjects, PhoneProjectInbox, PhoneChat, PhoneDMs };
+
+</script>
+<script type="text/babel" data-presets="env,react">
+// Phone app shell — manages screen navigation
+const { useState: aUseState, useMemo: aUseMemo, useEffect: aUseEffect } = React;
+const AD = window.MeccaData;
+const APMC = window.PMC;
+
+function PhoneApp() {
+  // Screens: 'projects' | 'projectInbox' | 'chat' | 'dms'
+  const [screen, setScreen] = aUseState('projects');
+  const [projectId, setProjectId] = aUseState(null);
+  const [convId, setConvId] = aUseState(null);
+
+  // Theme — read from URL/initial; default dark
+  aUseEffect(() => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }, []);
+
+  const projects = AD.PRIORITY_PROJECTS;
+  const project = aUseMemo(() => projects.find(p => p.id === projectId), [projectId]);
+  const conv = aUseMemo(() => AD.CONVERSATIONS.find(c => c.id === convId), [convId]);
+  const dmUnread = aUseMemo(() => AD.getGlobalDMs().reduce((s, c) => s + c.unreadCount, 0), []);
+
+  if (screen === 'chat' && conv) {
+    return (
+      <APMC.PhoneChat
+        conv={conv}
+        project={project}
+        onBack={() => {
+          if (conv.type === 'direct' && !conv.projectId) setScreen('dms');
+          else setScreen('projectInbox');
+        }}
+      />
+    );
+  }
+  if (screen === 'projectInbox' && project) {
+    return (
+      <APMC.PhoneProjectInbox
+        project={project}
+        onBack={() => setScreen('projects')}
+        onOpenConv={(id) => { setConvId(id); setScreen('chat'); }}
+      />
+    );
+  }
+  if (screen === 'dms') {
+    return (
+      <APMC.PhoneDMs
+        onBack={() => setScreen('projects')}
+        onOpenConv={(id) => {
+          setConvId(id);
+          setProjectId(null);
+          setScreen('chat');
+        }}
+      />
+    );
+  }
+  return (
+    <APMC.PhoneProjects
+      projects={projects}
+      dmUnread={dmUnread}
+      onOpenProject={(id) => {
+        setProjectId(id);
+        // Pre-select first conversation in project for fast chat preview
+        setConvId(AD.autoSelectConv(id));
+        setScreen('projectInbox');
+      }}
+      onOpenDM={() => setScreen('dms')}
+    />
+  );
+}
+
+window.PhoneApp = PhoneApp;
+
+</script>
+<script type="text/babel" data-presets="env,react">
+
+const D = window.MeccaData;
+const { PhoneProjects, PhoneProjectInbox, PhoneChat, PhoneDMs } = window.PMC;
+const projects = D.PRIORITY_PROJECTS;
+const dmUnread = D.getGlobalDMs().reduce((s, c) => s + c.unreadCount, 0);
+
+// Set dark theme on root
+document.documentElement.setAttribute('data-theme', 'dark');
+
+// Pick representative entities for each frame
+const criticalProj = projects.find(p => p.priorityLevel === 'critical') || projects[0];
+const projConvs = D.getProjectConversations(criticalProj.id);
+const projChat = projConvs.find(c => c.type === 'project') || projConvs[0];
+const taskConv = projConvs.find(c => c.type === 'task');
+const dmConv = D.getGlobalDMs()[0];
+
+// Wrap each phone screen in an iOS device frame.
+function PhoneFrame({ children }) {
+  return (
+    <IOSDevice width={390} height={844} dark={true}>
+      <div className="phone-mount" data-theme="dark">{children}</div>
+    </IOSDevice>
+  );
+}
+
+// Stub onBack/onOpen for static design frames — they can no-op or
+// log; this is a layout/design comp, not the live shell.
+const noop = () => {};
+
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="phone" title="Mobile · iPhone" subtitle="Mecca chat — phone form factor (390 × 844, dark)">
+        <DCArtboard id="projects" label="Projects" width={390} height={844}>
+          <PhoneFrame>
+            <PhoneProjects
+              projects={projects}
+              dmUnread={dmUnread}
+              onOpenProject={noop}
+              onOpenDM={noop}
+            />
+          </PhoneFrame>
+        </DCArtboard>
+
+        <DCArtboard id="project-inbox" label="Project inbox" width={390} height={844}>
+          <PhoneFrame>
+            <PhoneProjectInbox
+              project={criticalProj}
+              onBack={noop}
+              onOpenConv={noop}
+            />
+          </PhoneFrame>
+        </DCArtboard>
+
+        <DCArtboard id="chat-project" label="Project chat" width={390} height={844}>
+          <PhoneFrame>
+            <PhoneChat
+              conv={projChat}
+              project={criticalProj}
+              onBack={noop}
+            />
+          </PhoneFrame>
+        </DCArtboard>
+
+        {taskConv && (
+          <DCArtboard id="chat-task" label="Task chat" width={390} height={844}>
+            <PhoneFrame>
+              <PhoneChat
+                conv={taskConv}
+                project={criticalProj}
+                onBack={noop}
+              />
+            </PhoneFrame>
+          </DCArtboard>
+        )}
+
+        <DCArtboard id="dms" label="Direct messages" width={390} height={844}>
+          <PhoneFrame>
+            <PhoneDMs onBack={noop} onOpenConv={noop} />
+          </PhoneFrame>
+        </DCArtboard>
+
+        {dmConv && (
+          <DCArtboard id="chat-dm" label="DM chat" width={390} height={844}>
+            <PhoneFrame>
+              <PhoneChat
+                conv={dmConv}
+                project={null}
+                onBack={noop}
+              />
+            </PhoneFrame>
+          </DCArtboard>
+        )}
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+</script>
+
+</body>
+</html>

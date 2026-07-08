@@ -1,0 +1,250 @@
+/* Phone header experiments — three variants compared:
+   A. Original: 28px large title + subtitle (current behavior)
+   B. Collapsing: iOS native pattern — large title shrinks to inline on scroll
+   C. Compact:  drop the large title; keep only the subtitle as an eyebrow strip
+
+   All three render the same Procurement module body below so the only
+   variable is the header treatment. */
+
+/* ── Shared module body (lifted from .ph-mod, slimmed) ─────────────────── */
+.hex {
+  width: 100%; height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 100px; /* room for the fake modnav pill */
+  font-family: var(--mc-font);
+  color: var(--mc-text);
+  background: var(--mc-bg-app);
+  position: relative;
+}
+.hex__chips {
+  display: flex; gap: 6px;
+  padding: 0 16px 12px;
+}
+.hex__chip {
+  font-size: 12px; font-weight: 500;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--mc-surface);
+  color: var(--mc-text-mute);
+  border: 1px solid var(--mc-border-soft);
+}
+.hex__chip.is-active {
+  background: var(--mc-surface-hi);
+  color: var(--mc-text);
+  border-color: var(--mc-border);
+}
+.hex__list {
+  display: flex; flex-direction: column;
+  padding: 0 8px;
+}
+.hex__row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 12px;
+  border: 0; border-radius: 12px;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  color: var(--mc-text);
+}
+.hex__row + .hex__row {
+  border-top: 1px solid var(--mc-border-soft);
+  border-radius: 0;
+}
+.hex__poicon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px;
+  flex-shrink: 0;
+}
+.hex__body { flex: 1; min-width: 0; }
+.hex__top {
+  display: flex; align-items: baseline; gap: 8px;
+}
+.hex__name {
+  flex: 1; min-width: 0;
+  font-size: 14px; font-weight: 600;
+  color: var(--mc-text);
+  letter-spacing: -0.005em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.hex__amt {
+  font-size: 13px; font-weight: 600;
+  color: var(--mc-text);
+  font-variant-numeric: tabular-nums;
+}
+.hex__sub {
+  font-size: 12px;
+  color: var(--mc-text-dim);
+  margin-top: 2px;
+}
+.hex__sub.is-warn { color: var(--mc-amber); }
+
+/* ── A. Original (stays in flow, no sticky) ───────────────────────────── */
+.hex-h-original {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 0 20px 18px;
+  gap: 12px;
+}
+.hex-h-original__title {
+  font-size: 28px; font-weight: 700; letter-spacing: -0.022em;
+  color: var(--mc-text);
+  line-height: 1.1;
+  margin: 0;
+}
+.hex-h-original__sub {
+  font-size: 13px;
+  color: var(--mc-text-mute);
+  margin-top: 4px;
+}
+
+/* ── B. Collapsing (iOS native large-title pattern) ───────────────────── */
+.hex-h-collapse {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--mc-bg-app);
+  /* Soft fade-out at the bottom so content scrolling underneath blurs in */
+  transition: backdrop-filter 160ms ease, background 160ms ease;
+}
+.hex-h-collapse--stuck {
+  background: color-mix(in oklch, var(--mc-bg-app) 80%, transparent);
+  backdrop-filter: saturate(180%) blur(18px);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  box-shadow: 0 1px 0 0 var(--mc-border-soft);
+}
+.hex-h-collapse__bar {
+  position: relative;
+  height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 20px;
+}
+.hex-h-collapse__inline {
+  font-size: 17px; font-weight: 600;
+  color: var(--mc-text);
+  letter-spacing: -0.01em;
+  /* Interpolated by JS: opacity + translate */
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+.hex-h-collapse--stuck .hex-h-collapse__inline {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hex-h-collapse__large {
+  padding: 0 20px 14px;
+  /* Scales/fades as the page scrolls, JS-driven via CSS vars */
+  transform-origin: left top;
+  transform: scale(var(--hex-scale, 1));
+  opacity: var(--hex-opacity, 1);
+  transition: opacity 60ms linear, transform 60ms linear;
+}
+.hex-h-collapse__title {
+  font-size: 28px; font-weight: 700; letter-spacing: -0.022em;
+  color: var(--mc-text);
+  line-height: 1.05;
+  margin: 0;
+}
+.hex-h-collapse__sub {
+  font-size: 13px;
+  color: var(--mc-text-mute);
+  margin-top: 4px;
+}
+
+/* ── C. Compact (no h1; subtitle becomes a small eyebrow strip) ───────── */
+.hex-h-compact {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+  padding: 0 20px 14px;
+}
+.hex-h-compact__lbl {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mc-text-dim);
+}
+.hex-h-compact__lbl strong {
+  color: var(--mc-text-mute);
+  font-weight: 600;
+}
+.hex-h-compact__count {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600;
+  color: var(--mc-amber);
+  background: color-mix(in oklch, var(--mc-amber) 14%, transparent);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.hex-h-compact__dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--mc-amber);
+}
+
+/* ── Shared safe-area below status bar (matches phone framing) ────────── */
+.hex__safe {
+  padding-top: 16px;
+}
+
+/* ── Fake floating modbar (just decoration so layout balance matches) ── */
+.hex__fakebar {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 16px;
+  display: inline-flex; align-items: center;
+  gap: 4px; padding: 6px;
+  background: oklch(0.22 0.012 270 / 0.85);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--mc-border-soft);
+  border-radius: 999px;
+}
+.hex__fakebar__btn {
+  width: 38px; height: 38px;
+  border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--mc-text-mute);
+}
+.hex__fakebar__btn.is-active {
+  background: var(--mc-surface-hi);
+  color: var(--mc-text);
+}
+
+/* ── Caption strip above each phone in the canvas ──────────────────── */
+.hex-cap {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #2d2418;
+}
+.hex-cap__pill {
+  display: inline-block;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: #1a1a1f;
+  color: #f0eee9;
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+.hex-cap__title {
+  font-size: 18px; font-weight: 600;
+  letter-spacing: -0.018em;
+  margin: 0 0 4px;
+}
+.hex-cap__sub {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #6b5638;
+  max-width: 320px;
+  margin: 0;
+}
+.hex-cap__metric {
+  margin-top: 10px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  color: #8a7355;
+}
+.hex-cap__metric b { color: #2d2418; font-weight: 600; }
